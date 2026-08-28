@@ -1,0 +1,35 @@
+{
+  "failed" : 0,
+  "failed_names" : [
+
+  ],
+  "generated_at" : "2026-08-28T10:41:32Z",
+  "passed" : 2,
+  "results" : [
+    {
+      "display_name" : "agentic-media-tool-surface",
+      "duration_seconds" : 0.0011390447616577148,
+      "name" : "agentic-media-tool-surface",
+      "status" : "passed",
+      "tags" : [
+        "agentic-media",
+        "registration",
+        "tools"
+      ]
+    },
+    {
+      "display_name" : "agentic-media-path-input",
+      "duration_seconds" : 0.00043201446533203125,
+      "name" : "agentic-media-path-input",
+      "status" : "passed",
+      "tags" : [
+        "agentic-media",
+        "input",
+        "workspace"
+      ]
+    }
+  ],
+  "skipped" : 0,
+  "title" : "AgenticMedia",
+  "total" : 2
+}

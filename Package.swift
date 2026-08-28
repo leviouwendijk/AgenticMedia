@@ -1,27 +1,138 @@
 // swift-tools-version: 6.3
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "AgenticMedia",
+    platforms: [
+        .macOS(.v26),
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "AgenticMedia",
-            targets: ["AgenticMedia"]
+            targets: [
+                "AgenticMedia",
+            ]
+        ),
+        .executable(
+            name: "amtest",
+            targets: [
+                "AgenticMediaTestFlows",
+            ]
+        ),
+    ],
+    dependencies: [
+        .package(
+            url: "https://github.com/leviouwendijk/Agentic.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/AgenticExecution.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/AgenticWorkspace.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/AgenticIO.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/Primitives.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/Path.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/Media.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/Timecode.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/Images.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/TestFlows.git",
+            branch: "master"
         ),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "AgenticMedia"
+            name: "AgenticMedia",
+            dependencies: [
+                .product(
+                    name: "Agentic",
+                    package: "Agentic"
+                ),
+                .product(
+                    name: "AgenticExecution",
+                    package: "AgenticExecution"
+                ),
+                .product(
+                    name: "AgenticWorkspace",
+                    package: "AgenticWorkspace"
+                ),
+                .product(
+                    name: "AgenticIO",
+                    package: "AgenticIO"
+                ),
+                .product(
+                    name: "Primitives",
+                    package: "Primitives"
+                ),
+                .product(
+                    name: "Path",
+                    package: "Path"
+                ),
+                .product(
+                    name: "MediaAV",
+                    package: "Media"
+                ),
+                .product(
+                    name: "Timecode",
+                    package: "Timecode"
+                ),
+                .product(
+                    name: "Images",
+                    package: "Images"
+                ),
+            ]
         ),
-        .testTarget(
-            name: "AgenticMediaTests",
-            dependencies: ["AgenticMedia"]
+        .executableTarget(
+            name: "AgenticMediaTestFlows",
+            dependencies: [
+                "AgenticMedia",
+                .product(
+                    name: "Agentic",
+                    package: "Agentic"
+                ),
+                .product(
+                    name: "AgenticExecution",
+                    package: "AgenticExecution"
+                ),
+                .product(
+                    name: "Path",
+                    package: "Path"
+                ),
+                .product(
+                    name: "Primitives",
+                    package: "Primitives"
+                ),
+                .product(
+                    name: "TestFlows",
+                    package: "TestFlows"
+                ),
+            ]
         ),
     ],
-    swiftLanguageModes: [.v6]
+    swiftLanguageModes: [
+        .v6,
+    ]
 )
