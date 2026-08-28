@@ -3,12 +3,12 @@
   "failed_names" : [
 
   ],
-  "generated_at" : "2026-08-28T10:41:32Z",
-  "passed" : 2,
+  "generated_at" : "2026-08-28T11:10:40Z",
+  "passed" : 3,
   "results" : [
     {
       "display_name" : "agentic-media-tool-surface",
-      "duration_seconds" : 0.0011390447616577148,
+      "duration_seconds" : 0.0010960102081298828,
       "name" : "agentic-media-tool-surface",
       "status" : "passed",
       "tags" : [
@@ -19,7 +19,7 @@
     },
     {
       "display_name" : "agentic-media-path-input",
-      "duration_seconds" : 0.00043201446533203125,
+      "duration_seconds" : 0.0004869699478149414,
       "name" : "agentic-media-path-input",
       "status" : "passed",
       "tags" : [
@@ -27,9 +27,21 @@
         "input",
         "workspace"
       ]
+    },
+    {
+      "display_name" : "agentic-media-image-compress-input",
+      "duration_seconds" : 0.00020897388458251953,
+      "name" : "agentic-media-image-compress-input",
+      "status" : "passed",
+      "tags" : [
+        "agentic-media",
+        "images",
+        "input",
+        "mutation"
+      ]
     }
   ],
   "skipped" : 0,
   "title" : "AgenticMedia",
-  "total" : 2
+  "total" : 3
 }

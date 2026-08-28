@@ -44,6 +44,13 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
                     ),
                     "agentic-media.image-discover"
                 )
+
+                _ = try Expect.notNil(
+                    registry.tool(
+                        named: ImageCompressTool.identifier.rawValue
+                    ),
+                    "agentic-media.image-compress"
+                )
             }
         },
 
@@ -77,6 +84,53 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
                     decoded.path,
                     "clip.mov",
                     "agentic-media.path.value"
+                )
+            }
+        },
+
+        TestFlow(
+            "agentic-media-image-compress-input",
+            tags: [
+                "agentic-media",
+                "images",
+                "mutation",
+                "input",
+            ]
+        ) {
+            Step("image compression input uses bounded defaults") {
+                let decoded = try JSONToolBridge.decode(
+                    ImageCompressToolInput.self,
+                    from: .object(
+                        [
+                            "path": .string(
+                                "image-project"
+                            ),
+                        ]
+                    )
+                )
+
+                try Expect.equal(
+                    decoded.rootID,
+                    .project,
+                    "agentic-media.image-compress.root-default"
+                )
+
+                try Expect.equal(
+                    decoded.path,
+                    "image-project",
+                    "agentic-media.image-compress.path"
+                )
+
+                try Expect.equal(
+                    decoded.overwrite,
+                    true,
+                    "agentic-media.image-compress.overwrite-default"
+                )
+
+                try Expect.equal(
+                    decoded.incremental,
+                    true,
+                    "agentic-media.image-compress.incremental-default"
                 )
             }
         },
