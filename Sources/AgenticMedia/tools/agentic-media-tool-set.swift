@@ -10,6 +10,7 @@ public struct AgenticMediaToolSet: AgentToolSet {
             [
                 MediaInspectTool(),
                 TimecodeLTCProbeTool(),
+                TimecodeLTCRemuxTool(),
                 ImageDiscoverTool(),
                 ImageCompressTool(),
             ]

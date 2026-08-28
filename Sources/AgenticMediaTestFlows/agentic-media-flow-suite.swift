@@ -40,6 +40,13 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
 
                 _ = try Expect.notNil(
                     registry.tool(
+                        named: TimecodeLTCRemuxTool.identifier.rawValue
+                    ),
+                    "agentic-media.timecode-ltc-remux"
+                )
+
+                _ = try Expect.notNil(
+                    registry.tool(
                         named: ImageDiscoverTool.identifier.rawValue
                     ),
                     "agentic-media.image-discover"
@@ -131,6 +138,51 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
                     decoded.incremental,
                     true,
                     "agentic-media.image-compress.incremental-default"
+                )
+            }
+        },
+
+        TestFlow(
+            "agentic-media-timecode-remux-input",
+            tags: [
+                "agentic-media",
+                "timecode",
+                "ltc",
+                "mutation",
+                "input",
+            ]
+        ) {
+            Step("timecode remux input defaults to project root") {
+                let decoded = try JSONToolBridge.decode(
+                    TimecodeLTCRemuxToolInput.self,
+                    from: .object(
+                        [
+                            "source": .string(
+                                "source.mp4"
+                            ),
+                            "destination": .string(
+                                "output.mov"
+                            ),
+                        ]
+                    )
+                )
+
+                try Expect.equal(
+                    decoded.rootID,
+                    .project,
+                    "agentic-media.timecode-remux.root-default"
+                )
+
+                try Expect.equal(
+                    decoded.source,
+                    "source.mp4",
+                    "agentic-media.timecode-remux.source"
+                )
+
+                try Expect.equal(
+                    decoded.destination,
+                    "output.mov",
+                    "agentic-media.timecode-remux.destination"
                 )
             }
         },
