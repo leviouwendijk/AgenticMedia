@@ -7,6 +7,7 @@ import Images
 import Path
 import Primitives
 import Schema
+import SchemaMacros
 
 /// Compress configured outputs in a workspace Images project.
 @JSONSchema

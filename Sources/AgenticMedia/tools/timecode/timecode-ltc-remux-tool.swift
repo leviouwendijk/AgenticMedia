@@ -8,6 +8,7 @@ import Path
 import Primitives
 import Timecode
 import Schema
+import SchemaMacros
 
 /// Remux one media source to a destination while deriving native timecode from embedded LTC.
 @JSONSchema
