@@ -6,15 +6,28 @@ import Foundation
 import Images
 import Path
 import Primitives
+import Schema
 
+/// Compress configured outputs in a workspace Images project.
+@JSONSchema
 public struct ImageCompressToolInput:
     Sendable,
     Codable,
     Hashable
 {
+    /// Workspace root identifier. Defaults to project.
+    @Schema(required: false)
     public let rootID: PathAccessRootIdentifier
+
+    /// Path to the Images project relative to the selected workspace root.
     public let path: String
+
+    /// Allow configured outputs to replace existing files. Defaults to true.
+    @Schema(required: false)
     public let overwrite: Bool
+
+    /// Reuse Images incremental state when outputs are current. Defaults to true.
+    @Schema(required: false)
     public let incremental: Bool
 
     public init(
@@ -28,15 +41,19 @@ public struct ImageCompressToolInput:
         self.overwrite = overwrite
         self.incremental = incremental
     }
+}
 
-    private enum CodingKeys: String, CodingKey {
+private extension ImageCompressToolInput {
+    enum CodingKeys: String, CodingKey {
         case rootID
         case path
         case overwrite
         case incremental
     }
+}
 
-    public init(
+public extension ImageCompressToolInput {
+    init(
         from decoder: any Decoder
     ) throws {
         let container = try decoder.container(
@@ -63,34 +80,11 @@ public struct ImageCompressToolInput:
             forKey: .incremental
         ) ?? true
     }
-
-    public static var schema: JSONValue {
-        JSONSchema.object {
-            JSONSchema.string(
-                "rootID",
-                description: "Workspace root identifier. Defaults to project."
-            )
-
-            JSONSchema.string(
-                "path",
-                required: true,
-                description: "Path to the Images project relative to the selected workspace root."
-            )
-
-            JSONSchema.boolean(
-                "overwrite",
-                description: "Allow configured outputs to replace existing files. Defaults to true."
-            )
-
-            JSONSchema.boolean(
-                "incremental",
-                description: "Reuse Images incremental state when outputs are current. Defaults to true."
-            )
-        }
-    }
 }
 
-public struct ImageCompressTool: StaticAgentTool {
+public struct ImageCompressTool: StaticSchemaAgentTool {
+    public typealias Input = ImageCompressToolInput
+
     public static let identifier: AgentToolIdentifier =
         "image_compress"
 
@@ -99,9 +93,6 @@ public struct ImageCompressTool: StaticAgentTool {
 
     public static let risk: ActionRisk = .boundedmutate
 
-    public static var inputSchema: JSONValue? {
-        ImageCompressToolInput.schema
-    }
 
     public init() {}
 

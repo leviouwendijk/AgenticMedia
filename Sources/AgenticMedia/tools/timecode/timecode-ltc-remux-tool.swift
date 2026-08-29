@@ -7,14 +7,23 @@ import MediaAV
 import Path
 import Primitives
 import Timecode
+import Schema
 
+/// Remux one media source to a destination while deriving native timecode from embedded LTC.
+@JSONSchema
 public struct TimecodeLTCRemuxToolInput:
     Sendable,
     Codable,
     Hashable
 {
+    /// Workspace root identifier. Defaults to project.
+    @Schema(required: false)
     public let rootID: PathAccessRootIdentifier
+
+    /// Source media path relative to the selected workspace root.
     public let source: String
+
+    /// Destination media path relative to the selected workspace root.
     public let destination: String
 
     public init(
@@ -26,14 +35,18 @@ public struct TimecodeLTCRemuxToolInput:
         self.source = source
         self.destination = destination
     }
+}
 
-    private enum CodingKeys: String, CodingKey {
+private extension TimecodeLTCRemuxToolInput {
+    enum CodingKeys: String, CodingKey {
         case rootID
         case source
         case destination
     }
+}
 
-    public init(
+public extension TimecodeLTCRemuxToolInput {
+    init(
         from decoder: any Decoder
     ) throws {
         let container = try decoder.container(
@@ -55,30 +68,11 @@ public struct TimecodeLTCRemuxToolInput:
             forKey: .destination
         )
     }
-
-    public static var schema: JSONValue {
-        JSONSchema.object {
-            JSONSchema.string(
-                "rootID",
-                description: "Workspace root identifier. Defaults to project."
-            )
-
-            JSONSchema.string(
-                "source",
-                required: true,
-                description: "Workspace-relative media file containing embedded audio LTC."
-            )
-
-            JSONSchema.string(
-                "destination",
-                required: true,
-                description: "Workspace-relative new .mov file receiving LTC-derived native timecode."
-            )
-        }
-    }
 }
 
-public struct TimecodeLTCRemuxTool: StaticAgentTool {
+public struct TimecodeLTCRemuxTool: StaticSchemaAgentTool {
+    public typealias Input = TimecodeLTCRemuxToolInput
+
     public static let identifier: AgentToolIdentifier =
         "timecode_ltc_remux"
 
@@ -87,9 +81,6 @@ public struct TimecodeLTCRemuxTool: StaticAgentTool {
 
     public static let risk: ActionRisk = .boundedmutate
 
-    public static var inputSchema: JSONValue? {
-        TimecodeLTCRemuxToolInput.schema
-    }
 
     public init() {}
 

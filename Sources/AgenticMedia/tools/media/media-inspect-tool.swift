@@ -5,7 +5,9 @@ import AgenticWorkspace
 import MediaAV
 import Primitives
 
-public struct MediaInspectTool: StaticAgentTool {
+public struct MediaInspectTool: StaticSchemaAgentTool {
+    public typealias Input = AgenticMediaPathInput
+
     public static let identifier: AgentToolIdentifier =
         "media_inspect"
 
@@ -14,9 +16,6 @@ public struct MediaInspectTool: StaticAgentTool {
 
     public static let risk: ActionRisk = .observe
 
-    public static var inputSchema: JSONValue? {
-        AgenticMediaPathInput.schema
-    }
 
     public init() {}
 

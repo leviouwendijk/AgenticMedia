@@ -5,7 +5,9 @@ import AgenticWorkspace
 import Images
 import Primitives
 
-public struct ImageDiscoverTool: StaticAgentTool {
+public struct ImageDiscoverTool: StaticSchemaAgentTool {
+    public typealias Input = AgenticMediaPathInput
+
     public static let identifier: AgentToolIdentifier =
         "image_discover"
 
@@ -14,9 +16,6 @@ public struct ImageDiscoverTool: StaticAgentTool {
 
     public static let risk: ActionRisk = .observe
 
-    public static var inputSchema: JSONValue? {
-        AgenticMediaPathInput.schema
-    }
 
     public init() {}
 

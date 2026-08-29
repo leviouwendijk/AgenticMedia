@@ -6,7 +6,9 @@ import Foundation
 import Primitives
 import Timecode
 
-public struct TimecodeLTCProbeTool: StaticAgentTool {
+public struct TimecodeLTCProbeTool: StaticSchemaAgentTool {
+    public typealias Input = AgenticMediaPathInput
+
     public static let identifier: AgentToolIdentifier =
         "timecode_ltc_probe"
 
@@ -15,9 +17,6 @@ public struct TimecodeLTCProbeTool: StaticAgentTool {
 
     public static let risk: ActionRisk = .observe
 
-    public static var inputSchema: JSONValue? {
-        AgenticMediaPathInput.schema
-    }
 
     public init() {}
 

@@ -1,12 +1,19 @@
+import AgenticIO
 import Path
-import Primitives
+import Schema
 
+/// Select one path relative to an authorized Agentic workspace root.
+@JSONSchema
 public struct AgenticMediaPathInput:
     Sendable,
     Codable,
     Hashable
 {
+    /// Workspace root identifier. Defaults to project.
+    @Schema(required: false)
     public let rootID: PathAccessRootIdentifier
+
+    /// Path relative to the selected Agentic workspace root.
     public let path: String
 
     public init(
@@ -16,13 +23,17 @@ public struct AgenticMediaPathInput:
         self.rootID = rootID
         self.path = path
     }
+}
 
-    private enum CodingKeys: String, CodingKey {
+private extension AgenticMediaPathInput {
+    enum CodingKeys: String, CodingKey {
         case rootID
         case path
     }
+}
 
-    public init(
+public extension AgenticMediaPathInput {
+    init(
         from decoder: any Decoder
     ) throws {
         let container = try decoder.container(
@@ -38,20 +49,5 @@ public struct AgenticMediaPathInput:
             String.self,
             forKey: .path
         )
-    }
-
-    public static var schema: JSONValue {
-        JSONSchema.object {
-            JSONSchema.string(
-                "rootID",
-                description: "Workspace root identifier. Defaults to project."
-            )
-
-            JSONSchema.string(
-                "path",
-                required: true,
-                description: "Path relative to the selected Agentic workspace root."
-            )
-        }
     }
 }
