@@ -5,7 +5,7 @@ import AgenticWorkspace
 import MediaAV
 import Primitives
 
-public struct MediaInspectTool: StaticSchemaAgentTool {
+public struct MediaInspectTool: TypedAgentTool {
     public typealias Input = AgenticMediaPathInput
 
     public static let identifier: AgentToolIdentifier =

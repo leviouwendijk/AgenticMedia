@@ -6,7 +6,7 @@ import Foundation
 import Primitives
 import Timecode
 
-public struct TimecodeLTCProbeTool: StaticSchemaAgentTool {
+public struct TimecodeLTCProbeTool: TypedAgentTool {
     public typealias Input = AgenticMediaPathInput
 
     public static let identifier: AgentToolIdentifier =

@@ -82,7 +82,7 @@ public extension ImageCompressToolInput {
     }
 }
 
-public struct ImageCompressTool: StaticSchemaAgentTool {
+public struct ImageCompressTool: TypedAgentTool {
     public typealias Input = ImageCompressToolInput
 
     public static let identifier: AgentToolIdentifier =

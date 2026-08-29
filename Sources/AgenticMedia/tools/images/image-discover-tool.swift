@@ -5,7 +5,7 @@ import AgenticWorkspace
 import Images
 import Primitives
 
-public struct ImageDiscoverTool: StaticSchemaAgentTool {
+public struct ImageDiscoverTool: TypedAgentTool {
     public typealias Input = AgenticMediaPathInput
 
     public static let identifier: AgentToolIdentifier =

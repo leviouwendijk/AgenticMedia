@@ -70,7 +70,7 @@ public extension TimecodeLTCRemuxToolInput {
     }
 }
 
-public struct TimecodeLTCRemuxTool: StaticSchemaAgentTool {
+public struct TimecodeLTCRemuxTool: TypedAgentTool {
     public typealias Input = TimecodeLTCRemuxToolInput
 
     public static let identifier: AgentToolIdentifier =
