@@ -78,6 +78,51 @@ public actor AppleVoiceInputProvider:
         return .available
     }
 
+    public func status() async
+        -> AgenticConversationVoice.Status?
+    {
+        guard let status =
+            recording?.status()
+        else {
+            return nil
+        }
+
+        return .init(
+            elapsedSeconds:
+                status.durationSeconds,
+            level: status.rmsAmplitude.map(
+                normalizedLevel
+            )
+        )
+    }
+
+    private func normalizedLevel(
+        _ rmsAmplitude: Float
+    ) -> Double {
+        let amplitude = max(
+            Double(
+                rmsAmplitude
+            ),
+            0.000_001
+        )
+        let decibels =
+            20 * log10(
+                amplitude
+            )
+        let floorDecibels = -60.0
+
+        return min(
+            1,
+            max(
+                0,
+                (
+                    decibels
+                    - floorDecibels
+                ) / -floorDecibels
+            )
+        )
+    }
+
     public func start() async throws {
         guard recording == nil else {
             throw AppleVoiceInputError
