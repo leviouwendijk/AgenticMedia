@@ -14,6 +14,12 @@ let package = Package(
                 "AgenticMedia",
             ]
         ),
+        .library(
+            name: "AgenticMediaApple",
+            targets: [
+                "AgenticMediaApple",
+            ]
+        ),
         .executable(
             name: "amtest",
             targets: [
@@ -64,6 +70,22 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/leviouwendijk/Images.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/AgenticRuntime.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/AgenticInterfaces.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/Capture.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/Transcribe.git",
             branch: "master"
         ),
         .package(
@@ -119,12 +141,59 @@ let package = Package(
                     name: "Images",
                     package: "Images"
                 ),
+                .product(
+                    name: "Transcribe",
+                    package: "Transcribe"
+                ),
+                .product(
+                    name: "SpeechAnalysis",
+                    package: "Transcribe"
+                ),
+                .product(
+                    name: "SpeechAnalysisContext",
+                    package: "Transcribe"
+                ),
+            ]
+        ),
+        .target(
+            name: "AgenticMediaApple",
+            dependencies: [
+                "AgenticMedia",
+                .product(
+                    name: "AgenticRuntime",
+                    package: "AgenticRuntime"
+                ),
+                .product(
+                    name: "AgenticInterfaces",
+                    package: "AgenticInterfaces"
+                ),
+                .product(
+                    name: "Capture",
+                    package: "Capture"
+                ),
+                .product(
+                    name: "Diarization",
+                    package: "Transcribe"
+                ),
+                .product(
+                    name: "TranscribeApple",
+                    package: "Transcribe"
+                ),
             ]
         ),
         .executableTarget(
             name: "AgenticMediaTestFlows",
             dependencies: [
                 "AgenticMedia",
+                "AgenticMediaApple",
+                .product(
+                    name: "AgenticRuntime",
+                    package: "AgenticRuntime"
+                ),
+                .product(
+                    name: "AgenticInterfaces",
+                    package: "AgenticInterfaces"
+                ),
                 .product(
                     name: "Agentic",
                     package: "Agentic"
@@ -140,6 +209,14 @@ let package = Package(
                 .product(
                     name: "Primitives",
                     package: "Primitives"
+                ),
+                .product(
+                    name: "Transcribe",
+                    package: "Transcribe"
+                ),
+                .product(
+                    name: "SpeechAnalysis",
+                    package: "Transcribe"
                 ),
                 .product(
                     name: "TestFlows",

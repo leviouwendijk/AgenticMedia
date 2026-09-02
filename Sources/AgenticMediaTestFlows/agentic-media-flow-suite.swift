@@ -10,6 +10,19 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
 
     static let flows: [TestFlow] = [
         TestFlow(
+            "apple-voice-input",
+            tags: [
+                "agentic-media",
+                "apple",
+                "voice",
+            ]
+        ) {
+            try await AgenticMediaFlowSuite
+                .runAppleVoiceInputSurface()
+        },
+        speechToolSurfaceFlow,
+        speechSkillSurfaceFlow,
+        TestFlow(
             "agentic-media-tool-surface",
             tags: [
                 "agentic-media",
