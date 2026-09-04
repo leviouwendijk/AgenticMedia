@@ -2,17 +2,17 @@ import Agentic
 import AgenticExecution
 import AgenticIO
 import AgenticWorkspace
-import Images
+import Transcribe
 
-public struct ImageDiscoverTool: AgentTool {
-    public typealias Input = AgenticMediaPathInput
-    public typealias Output = AgenticImageDiscoveryOutput
+public struct SpeechTranscribeTool: AgentTool {
+    public typealias Input = SpeechTranscribeToolInput
+    public typealias Output = Transcription
 
     public static let identifier: AgentToolIdentifier =
-        "image_discover"
+        "speech_transcribe"
 
     public static let description =
-        "Discover supported image sources under the raw directory of a workspace Images project."
+        "Transcribe spoken content from an authorized workspace media file without speaker diarization."
 
     public static let risk: ActionRisk = .observe
 
@@ -32,7 +32,13 @@ public struct ImageDiscoverTool: AgentTool {
         .targetable
     }
 
-    public init() {}
+    public let runtime: AgenticMediaSpeechRuntime
+
+    public init(
+        runtime: AgenticMediaSpeechRuntime
+    ) {
+        self.runtime = runtime
+    }
 
     public func preflight(
         _ input: Input,
@@ -42,9 +48,9 @@ public struct ImageDiscoverTool: AgentTool {
             workspace: context.workspace,
             rootID: input.rootID,
             path: input.path,
-            capability: .scan,
+            capability: .read,
             toolName: name,
-            type: .directory
+            type: .file
         )
 
         return .init(
@@ -54,18 +60,18 @@ public struct ImageDiscoverTool: AgentTool {
             targetPaths: [
                 authorized.presentationPath,
             ],
-            summary: "Discover image sources without modifying the Images project.",
+            summary: "Transcribe spoken content without modifying the media file.",
             sideEffects: [],
             rootIDs: [
                 input.rootID.rawValue,
             ],
             capabilitiesRequired: [
-                .scan,
+                .read,
             ],
             policyChecks: [
                 "workspace_required",
                 "workspace_path_authorized",
-                "read_only_image_discovery",
+                "read_only_speech_transcription",
             ]
         )
     }
@@ -78,59 +84,14 @@ public struct ImageDiscoverTool: AgentTool {
             workspace: context.workspace,
             rootID: input.rootID,
             path: input.path,
-            capability: .scan,
+            capability: .read,
             toolName: name,
-            type: .directory
+            type: .file
         )
 
-        let sources = try ImageDiscovery.sources(
-            in: ImageProject(
-                root: authorized.absoluteURL
-            )
+        return try await runtime.transcribe(
+            file: authorized.absoluteURL,
+            localeIdentifier: input.localeIdentifier
         )
-
-        return AgenticImageDiscoveryOutput(
-            project: authorized.presentationPath,
-            sources: sources.map { source in
-                AgenticImageSourceSummary(
-                    path: source.relative.string,
-                    format: source.url.pathExtension.lowercased()
-                )
-            }
-        )
-    }
-}
-
-public struct AgenticImageDiscoveryOutput:
-    Sendable,
-    Codable,
-    Hashable
-{
-    public let project: String
-    public let sources: [AgenticImageSourceSummary]
-
-    public init(
-        project: String,
-        sources: [AgenticImageSourceSummary]
-    ) {
-        self.project = project
-        self.sources = sources
-    }
-}
-
-public struct AgenticImageSourceSummary:
-    Sendable,
-    Codable,
-    Hashable
-{
-    public let path: String
-    public let format: String
-
-    public init(
-        path: String,
-        format: String
-    ) {
-        self.path = path
-        self.format = format
     }
 }

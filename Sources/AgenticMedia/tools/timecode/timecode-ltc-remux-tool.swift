@@ -5,7 +5,6 @@ import AgenticWorkspace
 import Foundation
 import MediaAV
 import Path
-import Primitives
 import Timecode
 import Schema
 import SchemaMacros
@@ -71,8 +70,9 @@ public extension TimecodeLTCRemuxToolInput {
     }
 }
 
-public struct TimecodeLTCRemuxTool: TypedAgentTool {
+public struct TimecodeLTCRemuxTool: AgentTool {
     public typealias Input = TimecodeLTCRemuxToolInput
+    public typealias Output = TimecodeLTCRemuxToolOutput
 
     public static let identifier: AgentToolIdentifier =
         "timecode_ltc_remux"
@@ -82,27 +82,37 @@ public struct TimecodeLTCRemuxTool: TypedAgentTool {
 
     public static let risk: ActionRisk = .boundedmutate
 
+    public var identifier: AgentToolIdentifier {
+        Self.identifier
+    }
+
+    public var description: String {
+        Self.description
+    }
+
+    public var risk: ActionRisk {
+        Self.risk
+    }
+
+    public var execution: AgentToolExecutionContract {
+        .targetable
+    }
 
     public init() {}
 
     public func preflight(
-        input: JSONValue,
-        workspace: AgentWorkspace?
+        _ input: Input,
+        context: AgentToolExecutionContext
     ) async throws -> ToolPreflight {
-        let decoded = try JSONToolBridge.decode(
-            TimecodeLTCRemuxToolInput.self,
-            from: input
-        )
-
         let authorization = try authorizeOperation(
-            decoded,
-            workspace: workspace
+            input,
+            workspace: context.workspace
         )
 
         return .init(
             toolName: name,
             risk: risk,
-            workspaceRoot: workspace?.rootURL.path,
+            workspaceRoot: context.workspace?.rootURL.path,
             targetPaths: [
                 authorization.source.presentationPath,
                 authorization.destination.presentationPath,
@@ -115,7 +125,7 @@ public struct TimecodeLTCRemuxTool: TypedAgentTool {
                 "preserve encoded source media essence through passthrough remux",
             ],
             rootIDs: [
-                decoded.rootID.rawValue,
+                input.rootID.rawValue,
             ],
             capabilitiesRequired: [
                 .read,
@@ -134,17 +144,12 @@ public struct TimecodeLTCRemuxTool: TypedAgentTool {
     }
 
     public func call(
-        input: JSONValue,
-        workspace: AgentWorkspace?
-    ) async throws -> JSONValue {
-        let decoded = try JSONToolBridge.decode(
-            TimecodeLTCRemuxToolInput.self,
-            from: input
-        )
-
+        _ input: Input,
+        context: AgentToolExecutionContext
+    ) async throws -> Output {
         let authorization = try authorizeOperation(
-            decoded,
-            workspace: workspace
+            input,
+            workspace: context.workspace
         )
 
         let sourceURL = authorization.source.absoluteURL
@@ -213,22 +218,20 @@ public struct TimecodeLTCRemuxTool: TypedAgentTool {
             against: destinationURL
         )
 
-        return try JSONToolBridge.encode(
-            TimecodeLTCRemuxToolOutput(
-                source: authorization.source.presentationPath,
-                destination: authorization.destination.presentationPath,
-                ltcTrackID: signal.trackID,
-                ltcChannel: signal.channel,
-                frameRate: signal.format.frameRate.rationalString,
-                dropFrame: signal.format.dropFrame,
-                sourceTimecode: anchor.timecode.string,
-                frameNumber: frameNumber,
-                phaseWithinFrame: anchor.phaseWithinContainingFrame,
-                outputTimecodeTrackID: timecodeTrack.id,
-                videoTrackCount: inspection.videoTracks.count,
-                essenceTrackCount: essence.tracks.count,
-                essenceByteCount: essence.totalByteCount
-            )
+        return TimecodeLTCRemuxToolOutput(
+            source: authorization.source.presentationPath,
+            destination: authorization.destination.presentationPath,
+            ltcTrackID: signal.trackID,
+            ltcChannel: signal.channel,
+            frameRate: signal.format.frameRate.rationalString,
+            dropFrame: signal.format.dropFrame,
+            sourceTimecode: anchor.timecode.string,
+            frameNumber: frameNumber,
+            phaseWithinFrame: anchor.phaseWithinContainingFrame,
+            outputTimecodeTrackID: timecodeTrack.id,
+            videoTrackCount: inspection.videoTracks.count,
+            essenceTrackCount: essence.tracks.count,
+            essenceByteCount: essence.totalByteCount
         )
     }
 
@@ -280,24 +283,54 @@ private struct TimecodeLTCRemuxAuthorization {
     let destination: AgenticAuthorizedPath
 }
 
-private struct TimecodeLTCRemuxToolOutput:
+public struct TimecodeLTCRemuxToolOutput:
     Sendable,
     Codable,
     Hashable
 {
-    let source: String
-    let destination: String
-    let ltcTrackID: Int32
-    let ltcChannel: Int
-    let frameRate: String
-    let dropFrame: Bool
-    let sourceTimecode: String
-    let frameNumber: Int32
-    let phaseWithinFrame: Double
-    let outputTimecodeTrackID: Int32
-    let videoTrackCount: Int
-    let essenceTrackCount: Int
-    let essenceByteCount: Int64
+    public let source: String
+    public let destination: String
+    public let ltcTrackID: Int32
+    public let ltcChannel: Int
+    public let frameRate: String
+    public let dropFrame: Bool
+    public let sourceTimecode: String
+    public let frameNumber: Int32
+    public let phaseWithinFrame: Double
+    public let outputTimecodeTrackID: Int32
+    public let videoTrackCount: Int
+    public let essenceTrackCount: Int
+    public let essenceByteCount: Int64
+
+    public init(
+        source: String,
+        destination: String,
+        ltcTrackID: Int32,
+        ltcChannel: Int,
+        frameRate: String,
+        dropFrame: Bool,
+        sourceTimecode: String,
+        frameNumber: Int32,
+        phaseWithinFrame: Double,
+        outputTimecodeTrackID: Int32,
+        videoTrackCount: Int,
+        essenceTrackCount: Int,
+        essenceByteCount: Int64
+    ) {
+        self.source = source
+        self.destination = destination
+        self.ltcTrackID = ltcTrackID
+        self.ltcChannel = ltcChannel
+        self.frameRate = frameRate
+        self.dropFrame = dropFrame
+        self.sourceTimecode = sourceTimecode
+        self.frameNumber = frameNumber
+        self.phaseWithinFrame = phaseWithinFrame
+        self.outputTimecodeTrackID = outputTimecodeTrackID
+        self.videoTrackCount = videoTrackCount
+        self.essenceTrackCount = essenceTrackCount
+        self.essenceByteCount = essenceByteCount
+    }
 }
 
 private enum TimecodeLTCRemuxToolError:

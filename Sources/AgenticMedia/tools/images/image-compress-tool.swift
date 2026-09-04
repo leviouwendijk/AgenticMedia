@@ -5,7 +5,6 @@ import AgenticWorkspace
 import Foundation
 import Images
 import Path
-import Primitives
 import Schema
 import SchemaMacros
 
@@ -83,8 +82,9 @@ public extension ImageCompressToolInput {
     }
 }
 
-public struct ImageCompressTool: TypedAgentTool {
+public struct ImageCompressTool: AgentTool {
     public typealias Input = ImageCompressToolInput
+    public typealias Output = ImageCompressionReport
 
     public static let identifier: AgentToolIdentifier =
         "image_compress"
@@ -94,27 +94,37 @@ public struct ImageCompressTool: TypedAgentTool {
 
     public static let risk: ActionRisk = .boundedmutate
 
+    public var identifier: AgentToolIdentifier {
+        Self.identifier
+    }
+
+    public var description: String {
+        Self.description
+    }
+
+    public var risk: ActionRisk {
+        Self.risk
+    }
+
+    public var execution: AgentToolExecutionContract {
+        .targetable
+    }
 
     public init() {}
 
     public func preflight(
-        input: JSONValue,
-        workspace: AgentWorkspace?
+        _ input: Input,
+        context: AgentToolExecutionContext
     ) async throws -> ToolPreflight {
-        let decoded = try JSONToolBridge.decode(
-            ImageCompressToolInput.self,
-            from: input
-        )
-
         let authorization = try authorizeOperation(
-            decoded,
-            workspace: workspace
+            input,
+            workspace: context.workspace
         )
 
         return .init(
             toolName: name,
             risk: risk,
-            workspaceRoot: workspace?.rootURL.path,
+            workspaceRoot: context.workspace?.rootURL.path,
             targetPaths: authorization.targetPaths,
             summary: "Compress \(authorization.outputCount) configured image output(s) without pruning unconfigured files.",
             estimatedWriteCount: authorization.targetPaths.count,
@@ -124,7 +134,7 @@ public struct ImageCompressTool: TypedAgentTool {
                 "update \(ImageProjectDefaults.incrementalStateFilename)",
             ],
             rootIDs: [
-                decoded.rootID.rawValue,
+                input.rootID.rawValue,
             ],
             capabilitiesRequired: [
                 .read,
@@ -142,31 +152,22 @@ public struct ImageCompressTool: TypedAgentTool {
     }
 
     public func call(
-        input: JSONValue,
-        workspace: AgentWorkspace?
-    ) async throws -> JSONValue {
-        let decoded = try JSONToolBridge.decode(
-            ImageCompressToolInput.self,
-            from: input
-        )
-
+        _ input: Input,
+        context: AgentToolExecutionContext
+    ) async throws -> Output {
         let authorization = try authorizeOperation(
-            decoded,
-            workspace: workspace
+            input,
+            workspace: context.workspace
         )
 
-        let report = ImageCompression.compress(
+        return ImageCompression.compress(
             in: authorization.project,
             configuration: authorization.configuration,
             options: .init(
-                overwrite: decoded.overwrite,
+                overwrite: input.overwrite,
                 prune: false,
-                incremental: decoded.incremental
+                incremental: input.incremental
             )
-        )
-
-        return try JSONToolBridge.encode(
-            report
         )
     }
 

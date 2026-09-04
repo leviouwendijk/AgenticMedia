@@ -38,35 +38,35 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
                 )
 
                 _ = try Expect.notNil(
-                    registry.tool(
+                    registry.registeredTool(
                         named: MediaInspectTool.identifier.rawValue
                     ),
                     "agentic-media.media-inspect"
                 )
 
                 _ = try Expect.notNil(
-                    registry.tool(
+                    registry.registeredTool(
                         named: TimecodeLTCProbeTool.identifier.rawValue
                     ),
                     "agentic-media.timecode-ltc-probe"
                 )
 
                 _ = try Expect.notNil(
-                    registry.tool(
+                    registry.registeredTool(
                         named: TimecodeLTCRemuxTool.identifier.rawValue
                     ),
                     "agentic-media.timecode-ltc-remux"
                 )
 
                 _ = try Expect.notNil(
-                    registry.tool(
+                    registry.registeredTool(
                         named: ImageDiscoverTool.identifier.rawValue
                     ),
                     "agentic-media.image-discover"
                 )
 
                 _ = try Expect.notNil(
-                    registry.tool(
+                    registry.registeredTool(
                         named: ImageCompressTool.identifier.rawValue
                     ),
                     "agentic-media.image-compress"
