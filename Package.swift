@@ -73,10 +73,6 @@ let package = Package(
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/AgenticRuntime.git",
-            branch: "master"
-        ),
-        .package(
             url: "https://github.com/leviouwendijk/AgenticInterfaces.git",
             branch: "master"
         ),
@@ -160,10 +156,6 @@ let package = Package(
             dependencies: [
                 "AgenticMedia",
                 .product(
-                    name: "AgenticRuntime",
-                    package: "AgenticRuntime"
-                ),
-                .product(
                     name: "AgenticInterfaces",
                     package: "AgenticInterfaces"
                 ),
@@ -186,10 +178,6 @@ let package = Package(
             dependencies: [
                 "AgenticMedia",
                 "AgenticMediaApple",
-                .product(
-                    name: "AgenticRuntime",
-                    package: "AgenticRuntime"
-                ),
                 .product(
                     name: "AgenticInterfaces",
                     package: "AgenticInterfaces"
