@@ -7,7 +7,7 @@ import MediaAV
 import Path
 import Timecode
 import Schema
-import SchemaMacros
+import Macros
 
 /// Remux one media source to a destination while deriving native timecode from embedded LTC.
 @JSONSchema

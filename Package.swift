@@ -53,7 +53,7 @@ let package = Package(
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/SchemaMacros.git",
+            url: "https://github.com/leviouwendijk/Macros.git",
             branch: "master"
         ),
         .package(
@@ -118,8 +118,8 @@ let package = Package(
                     package: "Schema"
                 ),
                 .product(
-                    name: "SchemaMacros",
-                    package: "SchemaMacros"
+                    name: "Macros",
+                    package: "Macros"
                 ),
                 .product(
                     name: "Path",

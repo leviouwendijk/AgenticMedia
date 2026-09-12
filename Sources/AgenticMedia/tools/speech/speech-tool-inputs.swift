@@ -1,7 +1,7 @@
 import AgenticIO
 import Path
 import Schema
-import SchemaMacros
+import Macros
 
 /// Transcribe speech from one authorized workspace media file.
 @JSONSchema

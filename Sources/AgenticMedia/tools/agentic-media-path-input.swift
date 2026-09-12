@@ -1,7 +1,7 @@
 import AgenticIO
 import Path
 import Schema
-import SchemaMacros
+import Macros
 
 /// Select one path relative to an authorized Agentic workspace root.
 @JSONSchema
