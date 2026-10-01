@@ -1,41 +1,25 @@
 import Agentic
 import AgenticExecution
 import AgenticIO
-import AgenticWorkspace
+import Workspace
+import Macros
 import Foundation
 import SpeechAnalysisContext
 
-public struct SpeechAnalyzeTool: AgentTool {
-    public typealias Input = SpeechAnalyzeToolInput
-    public typealias Output = SpeechAnalysisContext
+public extension Media.Tools {
+    @Tool("speech_analyze")
+    struct AnalyzeSpeech: Tool {
+        public typealias Input = SpeechAnalyzeInput
+        public typealias Output = SpeechAnalysisContext
 
-    public static let identifier: AgentToolIdentifier =
-        "speech_analyze"
+        public static let purpose =
+            "Analyze an authorized workspace media file for transcription, diarization, and speaker attribution using a bounded conversation projection."
 
-    public static let description =
-        "Analyze an authorized workspace media file for transcription, diarization, and speaker attribution using a bounded conversation projection."
+        public static let risk: ActionRisk = .observe
 
-    public static let risk: ActionRisk = .observe
+        public let runtime: AgenticMediaSpeechRuntime
 
-    public var identifier: AgentToolIdentifier {
-        Self.identifier
-    }
-
-    public var description: String {
-        Self.description
-    }
-
-    public var risk: ActionRisk {
-        Self.risk
-    }
-
-    public var execution: AgentToolExecutionContract {
-        .targetable
-    }
-
-    public let runtime: AgenticMediaSpeechRuntime
-
-    public init(
+        public init(
         runtime: AgenticMediaSpeechRuntime
     ) {
         self.runtime = runtime
@@ -43,34 +27,34 @@ public struct SpeechAnalyzeTool: AgentTool {
 
     public func preflight(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> ToolPreflight {
         try validate(input)
 
         let authorized = try FileToolAccess.authorize(
-            workspace: context.workspace,
+            workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
         return .init(
-            toolName: name,
-            risk: risk,
-            workspaceRoot: context.workspace?.rootURL.path,
-            targetPaths: [
-                authorized.presentationPath,
-            ],
+            tool: Self.definition.identifier,
+            risk: Self.risk,
             summary: "Analyze speech and speaker attribution without modifying the media file.",
-            sideEffects: [],
-            rootIDs: [
-                input.rootID.rawValue,
-            ],
-            capabilitiesRequired: [
-                .read,
-            ],
+            access: .init(
+                targets: [
+                    authorized.presentationPath,
+                ],
+                roots: [
+                    input.rootID.rawValue,
+                ],
+                capabilities: [
+                    .read,
+                ]
+            ),
             policyChecks: [
                 "workspace_required",
                 "workspace_path_authorized",
@@ -82,16 +66,16 @@ public struct SpeechAnalyzeTool: AgentTool {
 
     public func call(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> Output {
         try validate(input)
 
         let authorized = try FileToolAccess.authorize(
-            workspace: context.workspace,
+            workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
@@ -108,19 +92,20 @@ public struct SpeechAnalyzeTool: AgentTool {
     }
 
     private func validate(
-        _ input: SpeechAnalyzeToolInput
+        _ input: SpeechAnalyzeInput
     ) throws {
         if let expectedSpeakerCount = input.expectedSpeakerCount,
            expectedSpeakerCount < 1
         {
-            throw SpeechAnalyzeToolError.invalidExpectedSpeakerCount(
+            throw SpeechAnalyzeError.invalidExpectedSpeakerCount(
                 expectedSpeakerCount
             )
         }
     }
 }
+}
 
-private enum SpeechAnalyzeToolError:
+private enum SpeechAnalyzeError:
     Error,
     Sendable,
     LocalizedError

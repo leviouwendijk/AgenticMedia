@@ -1,40 +1,24 @@
 import Agentic
 import AgenticExecution
 import AgenticIO
-import AgenticWorkspace
+import Workspace
+import Macros
 import Transcribe
 
-public struct SpeechTranscribeTool: AgentTool {
-    public typealias Input = SpeechTranscribeToolInput
-    public typealias Output = Transcription
+public extension Media.Tools {
+    @Tool("speech_transcribe")
+    struct TranscribeSpeech: Tool {
+        public typealias Input = SpeechTranscribeInput
+        public typealias Output = Transcription
 
-    public static let identifier: AgentToolIdentifier =
-        "speech_transcribe"
+        public static let purpose =
+            "Transcribe spoken content from an authorized workspace media file without speaker diarization."
 
-    public static let description =
-        "Transcribe spoken content from an authorized workspace media file without speaker diarization."
+        public static let risk: ActionRisk = .observe
 
-    public static let risk: ActionRisk = .observe
+        public let runtime: AgenticMediaSpeechRuntime
 
-    public var identifier: AgentToolIdentifier {
-        Self.identifier
-    }
-
-    public var description: String {
-        Self.description
-    }
-
-    public var risk: ActionRisk {
-        Self.risk
-    }
-
-    public var execution: AgentToolExecutionContract {
-        .targetable
-    }
-
-    public let runtime: AgenticMediaSpeechRuntime
-
-    public init(
+        public init(
         runtime: AgenticMediaSpeechRuntime
     ) {
         self.runtime = runtime
@@ -42,32 +26,32 @@ public struct SpeechTranscribeTool: AgentTool {
 
     public func preflight(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> ToolPreflight {
         let authorized = try FileToolAccess.authorize(
-            workspace: context.workspace,
+            workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
         return .init(
-            toolName: name,
-            risk: risk,
-            workspaceRoot: context.workspace?.rootURL.path,
-            targetPaths: [
-                authorized.presentationPath,
-            ],
+            tool: Self.definition.identifier,
+            risk: Self.risk,
             summary: "Transcribe spoken content without modifying the media file.",
-            sideEffects: [],
-            rootIDs: [
-                input.rootID.rawValue,
-            ],
-            capabilitiesRequired: [
-                .read,
-            ],
+            access: .init(
+                targets: [
+                    authorized.presentationPath,
+                ],
+                roots: [
+                    input.rootID.rawValue,
+                ],
+                capabilities: [
+                    .read,
+                ]
+            ),
             policyChecks: [
                 "workspace_required",
                 "workspace_path_authorized",
@@ -78,14 +62,14 @@ public struct SpeechTranscribeTool: AgentTool {
 
     public func call(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> Output {
         let authorized = try FileToolAccess.authorize(
-            workspace: context.workspace,
+            workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
@@ -94,4 +78,5 @@ public struct SpeechTranscribeTool: AgentTool {
             localeIdentifier: input.localeIdentifier
         )
     }
+}
 }

@@ -39,7 +39,7 @@ extension AgenticMediaFlowSuite {
                 var registry = ToolRegistry()
 
                 try registry.register(
-                    AgenticMediaToolSet(
+                    from: MediaToolProvider(
                         speech: runtime
                     )
                 )
@@ -56,14 +56,14 @@ extension AgenticMediaFlowSuite {
 
                 try Expect.true(
                     names.contains(
-                        SpeechTranscribeTool.identifier.rawValue
+                        Media.Tools.TranscribeSpeech.identifier.rawValue
                     ),
                     "AgenticMedia registers speech_transcribe"
                 )
 
                 try Expect.true(
                     names.contains(
-                        SpeechAnalyzeTool.identifier.rawValue
+                        Media.Tools.AnalyzeSpeech.identifier.rawValue
                     ),
                     "AgenticMedia registers speech_analyze"
                 )

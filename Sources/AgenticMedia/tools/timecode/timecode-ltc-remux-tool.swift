@@ -1,7 +1,7 @@
 import Agentic
 import AgenticExecution
 import AgenticIO
-import AgenticWorkspace
+import Workspace
 import Foundation
 import MediaAV
 import Path
@@ -11,7 +11,7 @@ import Macros
 
 /// Remux one media source to a destination while deriving native timecode from embedded LTC.
 @JSONSchema
-public struct TimecodeLTCRemuxToolInput:
+public struct TimecodeLTCRemuxInput:
     Sendable,
     Codable,
     Hashable
@@ -37,7 +37,7 @@ public struct TimecodeLTCRemuxToolInput:
     }
 }
 
-private extension TimecodeLTCRemuxToolInput {
+private extension TimecodeLTCRemuxInput {
     enum CodingKeys: String, CodingKey {
         case rootID
         case source
@@ -45,7 +45,7 @@ private extension TimecodeLTCRemuxToolInput {
     }
 }
 
-public extension TimecodeLTCRemuxToolInput {
+public extension TimecodeLTCRemuxInput {
     init(
         from decoder: any Decoder
     ) throws {
@@ -70,66 +70,54 @@ public extension TimecodeLTCRemuxToolInput {
     }
 }
 
-public struct TimecodeLTCRemuxTool: AgentTool {
-    public typealias Input = TimecodeLTCRemuxToolInput
-    public typealias Output = TimecodeLTCRemuxToolOutput
+public extension Media.Tools {
+    @Tool("timecode_ltc_remux")
+    struct RemuxLTC: Tool {
+        public typealias Input = TimecodeLTCRemuxInput
+        public typealias Output = TimecodeLTCRemuxOutput
 
-    public static let identifier: AgentToolIdentifier =
-        "timecode_ltc_remux"
+        public static let purpose =
+            "Create a new MOV whose native timecode track is derived from embedded audio LTC while preserving encoded media essence."
 
-    public static let description =
-        "Create a new MOV whose native timecode track is derived from embedded audio LTC while preserving encoded media essence."
+        public static let risk: ActionRisk = .boundedmutate
 
-    public static let risk: ActionRisk = .boundedmutate
-
-    public var identifier: AgentToolIdentifier {
-        Self.identifier
-    }
-
-    public var description: String {
-        Self.description
-    }
-
-    public var risk: ActionRisk {
-        Self.risk
-    }
-
-    public var execution: AgentToolExecutionContract {
-        .targetable
-    }
-
-    public init() {}
+        public init() {}
 
     public func preflight(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> ToolPreflight {
         let authorization = try authorizeOperation(
             input,
-            workspace: context.workspace
+            workspace: workspace
         )
 
         return .init(
-            toolName: name,
-            risk: risk,
-            workspaceRoot: context.workspace?.rootURL.path,
-            targetPaths: [
-                authorization.source.presentationPath,
-                authorization.destination.presentationPath,
-            ],
+            tool: Self.definition.identifier,
+            risk: Self.risk,
             summary: "Derive native timecode from source LTC and create one new MOV destination without overwriting existing output.",
-            estimatedWriteCount: 1,
+            access: .init(
+                targets: [
+                    authorization.source.presentationPath,
+                    authorization.destination.presentationPath,
+                ],
+                roots: [
+                    input.rootID.rawValue,
+                ],
+                capabilities: [
+                    .read,
+                    .write,
+                ]
+            ),
+            estimates: .init(
+                write: .init(
+                    count: 1
+                )
+            ),
             sideEffects: [
                 "create one destination MOV",
                 "add native tmcd timecode derived from embedded audio LTC",
                 "preserve encoded source media essence through passthrough remux",
-            ],
-            rootIDs: [
-                input.rootID.rawValue,
-            ],
-            capabilitiesRequired: [
-                .read,
-                .write,
             ],
             policyChecks: [
                 "workspace_required",
@@ -145,11 +133,11 @@ public struct TimecodeLTCRemuxTool: AgentTool {
 
     public func call(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> Output {
         let authorization = try authorizeOperation(
             input,
-            workspace: context.workspace
+            workspace: workspace
         )
 
         let sourceURL = authorization.source.absoluteURL
@@ -165,7 +153,7 @@ public struct TimecodeLTCRemuxTool: AgentTool {
         guard let frameNumber = Int32(
             exactly: sourceFrame
         ) else {
-            throw TimecodeLTCRemuxToolError.frameNumberOutOfRange(
+            throw TimecodeLTCRemuxError.frameNumberOutOfRange(
                 sourceFrame
             )
         }
@@ -184,7 +172,7 @@ public struct TimecodeLTCRemuxTool: AgentTool {
             )
 
         guard writtenFrame == frameNumber else {
-            throw TimecodeLTCRemuxToolError.timecodeReadbackMismatch(
+            throw TimecodeLTCRemuxError.timecodeReadbackMismatch(
                 expected: frameNumber,
                 actual: writtenFrame
             )
@@ -195,7 +183,7 @@ public struct TimecodeLTCRemuxTool: AgentTool {
         )
 
         guard inspection.timecodeTracks.count == 1 else {
-            throw TimecodeLTCRemuxToolError.unexpectedTimecodeTrackCount(
+            throw TimecodeLTCRemuxError.unexpectedTimecodeTrackCount(
                 inspection.timecodeTracks.count
             )
         }
@@ -206,7 +194,7 @@ public struct TimecodeLTCRemuxTool: AgentTool {
             guard videoTrack.associatedTimecodeTrackIDs.contains(
                 timecodeTrack.id
             ) else {
-                throw TimecodeLTCRemuxToolError.missingTimecodeAssociation(
+                throw TimecodeLTCRemuxError.missingTimecodeAssociation(
                     videoTrackID: videoTrack.id,
                     timecodeTrackID: timecodeTrack.id
                 )
@@ -218,7 +206,7 @@ public struct TimecodeLTCRemuxTool: AgentTool {
             against: destinationURL
         )
 
-        return TimecodeLTCRemuxToolOutput(
+        return TimecodeLTCRemuxOutput(
             source: authorization.source.presentationPath,
             destination: authorization.destination.presentationPath,
             ltcTrackID: signal.trackID,
@@ -236,15 +224,15 @@ public struct TimecodeLTCRemuxTool: AgentTool {
     }
 
     private func authorizeOperation(
-        _ input: TimecodeLTCRemuxToolInput,
-        workspace: AgentWorkspace?
+        _ input: TimecodeLTCRemuxInput,
+        workspace: WorkspaceContext?
     ) throws -> TimecodeLTCRemuxAuthorization {
         let source = try FileToolAccess.authorize(
             workspace: workspace,
             rootID: input.rootID,
             path: input.source,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
@@ -253,20 +241,20 @@ public struct TimecodeLTCRemuxTool: AgentTool {
             rootID: input.rootID,
             path: input.destination,
             capability: .write,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
         guard source.absoluteURL.standardizedFileURL
             != destination.absoluteURL.standardizedFileURL else {
-            throw TimecodeLTCRemuxToolError.identicalSourceAndDestination
+            throw TimecodeLTCRemuxError.identicalSourceAndDestination
         }
 
         guard destination.absoluteURL
             .pathExtension
             .lowercased()
             == "mov" else {
-            throw TimecodeLTCRemuxToolError.destinationMustBeMOV(
+            throw TimecodeLTCRemuxError.destinationMustBeMOV(
                 destination.presentationPath
             )
         }
@@ -277,13 +265,14 @@ public struct TimecodeLTCRemuxTool: AgentTool {
         )
     }
 }
-
-private struct TimecodeLTCRemuxAuthorization {
-    let source: AgenticAuthorizedPath
-    let destination: AgenticAuthorizedPath
 }
 
-public struct TimecodeLTCRemuxToolOutput:
+private struct TimecodeLTCRemuxAuthorization {
+    let source: AuthorizedPath
+    let destination: AuthorizedPath
+}
+
+public struct TimecodeLTCRemuxOutput:
     Sendable,
     Codable,
     Hashable
@@ -333,7 +322,7 @@ public struct TimecodeLTCRemuxToolOutput:
     }
 }
 
-private enum TimecodeLTCRemuxToolError:
+private enum TimecodeLTCRemuxError:
     Error,
     Sendable,
     LocalizedError

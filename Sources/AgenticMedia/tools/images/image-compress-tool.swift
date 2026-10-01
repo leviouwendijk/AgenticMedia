@@ -1,7 +1,7 @@
 import Agentic
 import AgenticExecution
 import AgenticIO
-import AgenticWorkspace
+import Workspace
 import Foundation
 import Images
 import Path
@@ -10,7 +10,7 @@ import Macros
 
 /// Compress configured outputs in a workspace Images project.
 @JSONSchema
-public struct ImageCompressToolInput:
+public struct ImageCompressInput:
     Sendable,
     Codable,
     Hashable
@@ -43,7 +43,7 @@ public struct ImageCompressToolInput:
     }
 }
 
-private extension ImageCompressToolInput {
+private extension ImageCompressInput {
     enum CodingKeys: String, CodingKey {
         case rootID
         case path
@@ -52,7 +52,7 @@ private extension ImageCompressToolInput {
     }
 }
 
-public extension ImageCompressToolInput {
+public extension ImageCompressInput {
     init(
         from decoder: any Decoder
     ) throws {
@@ -82,63 +82,51 @@ public extension ImageCompressToolInput {
     }
 }
 
-public struct ImageCompressTool: AgentTool {
-    public typealias Input = ImageCompressToolInput
-    public typealias Output = ImageCompressionReport
+public extension Media.Tools {
+    @Tool("image_compress")
+    struct CompressImages: Tool {
+        public typealias Input = ImageCompressInput
+        public typealias Output = ImageCompressionReport
 
-    public static let identifier: AgentToolIdentifier =
-        "image_compress"
+        public static let purpose =
+            "Compress configured outputs in a workspace Images project without pruning unconfigured files."
 
-    public static let description =
-        "Compress configured outputs in a workspace Images project without pruning unconfigured files."
+        public static let risk: ActionRisk = .boundedmutate
 
-    public static let risk: ActionRisk = .boundedmutate
-
-    public var identifier: AgentToolIdentifier {
-        Self.identifier
-    }
-
-    public var description: String {
-        Self.description
-    }
-
-    public var risk: ActionRisk {
-        Self.risk
-    }
-
-    public var execution: AgentToolExecutionContract {
-        .targetable
-    }
-
-    public init() {}
+        public init() {}
 
     public func preflight(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> ToolPreflight {
         let authorization = try authorizeOperation(
             input,
-            workspace: context.workspace
+            workspace: workspace
         )
 
         return .init(
-            toolName: name,
-            risk: risk,
-            workspaceRoot: context.workspace?.rootURL.path,
-            targetPaths: authorization.targetPaths,
+            tool: Self.definition.identifier,
+            risk: Self.risk,
             summary: "Compress \(authorization.outputCount) configured image output(s) without pruning unconfigured files.",
-            estimatedWriteCount: authorization.targetPaths.count,
+            access: .init(
+                targets: authorization.targetPaths,
+                roots: [
+                    input.rootID.rawValue,
+                ],
+                capabilities: [
+                    .read,
+                    .write,
+                ]
+            ),
+            estimates: .init(
+                write: .init(
+                    count: authorization.targetPaths.count
+                )
+            ),
             sideEffects: [
                 "write or replace configured compressed image outputs",
                 "create parent directories required by configured outputs",
                 "update \(ImageProjectDefaults.incrementalStateFilename)",
-            ],
-            rootIDs: [
-                input.rootID.rawValue,
-            ],
-            capabilitiesRequired: [
-                .read,
-                .write,
             ],
             policyChecks: [
                 "workspace_required",
@@ -153,11 +141,11 @@ public struct ImageCompressTool: AgentTool {
 
     public func call(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> Output {
         let authorization = try authorizeOperation(
             input,
-            workspace: context.workspace
+            workspace: workspace
         )
 
         return ImageCompression.compress(
@@ -172,15 +160,15 @@ public struct ImageCompressTool: AgentTool {
     }
 
     private func authorizeOperation(
-        _ input: ImageCompressToolInput,
-        workspace: AgentWorkspace?
+        _ input: ImageCompressInput,
+        workspace: WorkspaceContext?
     ) throws -> ImageCompressAuthorization {
         let projectAccess = try FileToolAccess.authorize(
             workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .directory
         )
 
@@ -198,7 +186,7 @@ public struct ImageCompressTool: AgentTool {
             rootID: input.rootID,
             path: configurationPath,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
@@ -206,7 +194,7 @@ public struct ImageCompressTool: AgentTool {
             from: configurationAccess.absoluteURL
         )
 
-        var destinationAccesses: [AgenticAuthorizedPath] = []
+        var destinationAccesses: [AuthorizedPath] = []
 
         for image in configuration.images {
             _ = try project.sourceURL(
@@ -223,7 +211,7 @@ public struct ImageCompressTool: AgentTool {
                 rootID: input.rootID,
                 path: sourcePath,
                 capability: .read,
-                toolName: name,
+                toolName: Self.identifier.rawValue,
                 type: .file
             )
 
@@ -243,7 +231,7 @@ public struct ImageCompressTool: AgentTool {
                         rootID: input.rootID,
                         path: destinationPath,
                         capability: .write,
-                        toolName: name,
+                        toolName: Self.identifier.rawValue,
                         type: .file
                     )
                 )
@@ -260,7 +248,7 @@ public struct ImageCompressTool: AgentTool {
             rootID: input.rootID,
             path: incrementalStatePath,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
@@ -269,7 +257,7 @@ public struct ImageCompressTool: AgentTool {
             rootID: input.rootID,
             path: incrementalStatePath,
             capability: .write,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
@@ -301,12 +289,13 @@ public struct ImageCompressTool: AgentTool {
         return "\(projectPath)/\(child)"
     }
 }
+}
 
 private struct ImageCompressAuthorization {
     let project: ImageProject
     let configuration: ImageConfiguration
-    let destinations: [AgenticAuthorizedPath]
-    let incrementalState: AgenticAuthorizedPath
+    let destinations: [AuthorizedPath]
+    let incrementalState: AuthorizedPath
 
     var outputCount: Int {
         configuration.images.reduce(

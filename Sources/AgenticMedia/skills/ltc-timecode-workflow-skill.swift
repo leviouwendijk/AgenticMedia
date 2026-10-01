@@ -9,20 +9,22 @@ public extension AgenticMediaSkillProvider {
         Use a staged LTC workflow instead of mutating media immediately.
 
         Workflow:
-        1. Use `\(MediaInspectTool.identifier.rawValue)` when track layout and native metadata are not already known.
-        2. Use `\(TimecodeLTCProbeTool.identifier.rawValue)` to detect and inspect LTC before proposing a remux.
-        3. Only use `\(TimecodeLTCRemuxTool.identifier.rawValue)` after the source, destination, and detected LTC state are clear.
+        1. Use `\(Media.Tools.Inspect.identifier.rawValue)` when track layout and native metadata are not already known.
+        2. Use `\(Media.Tools.ProbeLTC.identifier.rawValue)` to detect and inspect LTC before proposing a remux.
+        3. Only use `\(Media.Tools.RemuxLTC.identifier.rawValue)` after the source, destination, and detected LTC state are clear.
         4. Treat remux as a media mutation and preserve the normal Agentic review boundary.
         5. Inspect or otherwise verify the produced media after remux when the result matters to downstream work.
         6. Do not infer usable LTC merely from the existence of an audio track; rely on the deterministic probe result.
         """,
         metadata: .init(
-            domains: [],
+            domains: [
+                .init(rawValue: Media.namespace.rawValue),
+            ],
             tools: .init(
                 optional: [
-                    .tool(MediaInspectTool.identifier),
-                    .tool(TimecodeLTCProbeTool.identifier),
-                    .tool(TimecodeLTCRemuxTool.identifier),
+                    .tool(Media.Tools.Inspect.identifier),
+                    .tool(Media.Tools.ProbeLTC.identifier),
+                    .tool(Media.Tools.RemuxLTC.identifier),
                 ]
             ),
             tags: [

@@ -5,7 +5,7 @@ import Macros
 
 /// Select one path relative to an authorized Agentic workspace root.
 @JSONSchema
-public struct AgenticMediaPathInput:
+public struct MediaPathInput:
     Sendable,
     Codable,
     Hashable
@@ -26,14 +26,14 @@ public struct AgenticMediaPathInput:
     }
 }
 
-private extension AgenticMediaPathInput {
+private extension MediaPathInput {
     enum CodingKeys: String, CodingKey {
         case rootID
         case path
     }
 }
 
-public extension AgenticMediaPathInput {
+public extension MediaPathInput {
     init(
         from decoder: any Decoder
     ) throws {

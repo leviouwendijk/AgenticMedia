@@ -5,7 +5,7 @@ import TestFlows
 extension AgenticMediaFlowSuite {
     static func runAppleVoiceInputSurface()
         async throws
-        -> [TestFlowDiagnostic]
+        -> [TestDiagnostic]
     {
         let provider: any VoiceInputProvider =
             AppleVoiceInputProvider(

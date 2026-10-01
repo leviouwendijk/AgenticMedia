@@ -34,40 +34,40 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
                 var registry = ToolRegistry()
 
                 try registry.register(
-                    AgenticMediaToolSet()
+                    from: MediaToolProvider()
                 )
 
                 _ = try Expect.notNil(
                     registry.registeredTool(
-                        named: MediaInspectTool.identifier.rawValue
+                        named: Media.Tools.Inspect.identifier.rawValue
                     ),
                     "agentic-media.media-inspect"
                 )
 
                 _ = try Expect.notNil(
                     registry.registeredTool(
-                        named: TimecodeLTCProbeTool.identifier.rawValue
+                        named: Media.Tools.ProbeLTC.identifier.rawValue
                     ),
                     "agentic-media.timecode-ltc-probe"
                 )
 
                 _ = try Expect.notNil(
                     registry.registeredTool(
-                        named: TimecodeLTCRemuxTool.identifier.rawValue
+                        named: Media.Tools.RemuxLTC.identifier.rawValue
                     ),
                     "agentic-media.timecode-ltc-remux"
                 )
 
                 _ = try Expect.notNil(
                     registry.registeredTool(
-                        named: ImageDiscoverTool.identifier.rawValue
+                        named: Media.Tools.DiscoverImages.identifier.rawValue
                     ),
                     "agentic-media.image-discover"
                 )
 
                 _ = try Expect.notNil(
                     registry.registeredTool(
-                        named: ImageCompressTool.identifier.rawValue
+                        named: Media.Tools.CompressImages.identifier.rawValue
                     ),
                     "agentic-media.image-compress"
                 )
@@ -84,7 +84,7 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
         ) {
             Step("path input defaults to project root") {
                 let decoded = try JSONToolBridge.decode(
-                    AgenticMediaPathInput.self,
+                    MediaPathInput.self,
                     from: .object(
                         [
                             "path": .string(
@@ -119,7 +119,7 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
         ) {
             Step("image compression input uses bounded defaults") {
                 let decoded = try JSONToolBridge.decode(
-                    ImageCompressToolInput.self,
+                    ImageCompressInput.self,
                     from: .object(
                         [
                             "path": .string(
@@ -167,7 +167,7 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
         ) {
             Step("timecode remux input defaults to project root") {
                 let decoded = try JSONToolBridge.decode(
-                    TimecodeLTCRemuxToolInput.self,
+                    TimecodeLTCRemuxInput.self,
                     from: .object(
                         [
                             "source": .string(

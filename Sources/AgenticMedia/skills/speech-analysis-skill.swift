@@ -9,9 +9,9 @@ public extension AgenticMediaSkillProvider {
         Choose speech tooling according to what the task actually needs.
 
         Workflow:
-        1. Use `\(SpeechTranscribeTool.identifier.rawValue)` when the task only needs the spoken words.
-        2. Use `\(SpeechAnalyzeTool.identifier.rawValue)` when speaker attribution, turn-taking, or who-said-what matters.
-        3. Use `\(MediaInspectTool.identifier.rawValue)` first when the media asset, available tracks, or suitability of the source is uncertain.
+        1. Use `\(Media.Tools.TranscribeSpeech.identifier.rawValue)` when the task only needs the spoken words.
+        2. Use `\(Media.Tools.AnalyzeSpeech.identifier.rawValue)` when speaker attribution, turn-taking, or who-said-what matters.
+        3. Use `\(Media.Tools.Inspect.identifier.rawValue)` first when the media asset, available tracks, or suitability of the source is uncertain.
         4. Do not routinely invoke both speech tools for the same purpose.
         5. Supply expectedSpeakerCount only when it is supported by the user or reliable evidence; do not guess it merely to force diarization.
         6. Treat speaker identifiers as anonymous inferred speaker clusters, not as real-world identities.
@@ -19,12 +19,14 @@ public extension AgenticMediaSkillProvider {
         8. Prefer the bounded conversation result for ordinary reasoning. Do not request or manufacture diagnostic inference, embedding observations, or acoustic evidence unless a dedicated diagnostic workflow explicitly requires them.
         """,
         metadata: .init(
-            domains: [],
+            domains: [
+                .init(rawValue: Media.namespace.rawValue),
+            ],
             tools: .init(
                 optional: [
-                    .tool(MediaInspectTool.identifier),
-                    .tool(SpeechTranscribeTool.identifier),
-                    .tool(SpeechAnalyzeTool.identifier),
+                    .tool(Media.Tools.Inspect.identifier),
+                    .tool(Media.Tools.TranscribeSpeech.identifier),
+                    .tool(Media.Tools.AnalyzeSpeech.identifier),
                 ]
             ),
             tags: [

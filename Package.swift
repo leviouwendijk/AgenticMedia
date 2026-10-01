@@ -37,7 +37,7 @@ let package = Package(
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/AgenticWorkspace.git",
+            url: "https://github.com/leviouwendijk/Workspace.git",
             branch: "master"
         ),
         .package(
@@ -102,8 +102,8 @@ let package = Package(
                     package: "AgenticExecution"
                 ),
                 .product(
-                    name: "AgenticWorkspace",
-                    package: "AgenticWorkspace"
+                    name: "Workspace",
+                    package: "Workspace"
                 ),
                 .product(
                     name: "AgenticIO",
@@ -217,3 +217,30 @@ let package = Package(
         .v6,
     ]
 )
+
+for target in package.targets {
+    switch target.type {
+    case .regular, .executable, .test, .macro:
+        var settings = target.swiftSettings ?? []
+
+        settings.append(
+            .treatAllWarnings(as: .error)
+        )
+
+        settings.append(
+            .unsafeFlags(
+                [
+                    "-continue-building-after-errors"
+                ]
+            )
+        )
+
+        target.swiftSettings = settings
+
+    case .plugin, .system, .binary:
+        break
+
+    @unknown default:
+        break
+    }
+}

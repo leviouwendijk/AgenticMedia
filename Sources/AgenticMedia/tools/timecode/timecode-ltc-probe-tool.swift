@@ -1,68 +1,52 @@
 import Agentic
 import AgenticExecution
 import AgenticIO
-import AgenticWorkspace
+import Workspace
+import Macros
 import Foundation
 import Timecode
 
-public struct TimecodeLTCProbeTool: AgentTool {
-    public typealias Input = AgenticMediaPathInput
-    public typealias Output = AgenticLTCProbeOutput
+public extension Media.Tools {
+    @Tool("timecode_ltc_probe")
+    struct ProbeLTC: Tool {
+        public typealias Input = MediaPathInput
+        public typealias Output = LTCProbeOutput
 
-    public static let identifier: AgentToolIdentifier =
-        "timecode_ltc_probe"
+        public static let purpose =
+            "Probe embedded audio LTC in a workspace media asset and summarize detected signals and anchors."
 
-    public static let description =
-        "Probe embedded audio LTC in a workspace media asset and summarize detected signals and anchors."
+        public static let risk: ActionRisk = .observe
 
-    public static let risk: ActionRisk = .observe
-
-    public var identifier: AgentToolIdentifier {
-        Self.identifier
-    }
-
-    public var description: String {
-        Self.description
-    }
-
-    public var risk: ActionRisk {
-        Self.risk
-    }
-
-    public var execution: AgentToolExecutionContract {
-        .targetable
-    }
-
-    public init() {}
+        public init() {}
 
     public func preflight(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> ToolPreflight {
         let authorized = try FileToolAccess.authorize(
-            workspace: context.workspace,
+            workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
         return .init(
-            toolName: name,
-            risk: risk,
-            workspaceRoot: context.workspace?.rootURL.path,
-            targetPaths: [
-                authorized.presentationPath,
-            ],
+            tool: Self.definition.identifier,
+            risk: Self.risk,
             summary: "Decode and summarize embedded audio LTC without modifying the asset.",
-            sideEffects: [],
-            rootIDs: [
-                input.rootID.rawValue,
-            ],
-            capabilitiesRequired: [
-                .read,
-            ],
+            access: .init(
+                targets: [
+                    authorized.presentationPath,
+                ],
+                roots: [
+                    input.rootID.rawValue,
+                ],
+                capabilities: [
+                    .read,
+                ]
+            ),
             policyChecks: [
                 "workspace_required",
                 "workspace_path_authorized",
@@ -73,14 +57,14 @@ public struct TimecodeLTCProbeTool: AgentTool {
 
     public func call(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> Output {
         let authorized = try FileToolAccess.authorize(
-            workspace: context.workspace,
+            workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
@@ -88,7 +72,7 @@ public struct TimecodeLTCProbeTool: AgentTool {
             authorized.absoluteURL
         )
 
-        return AgenticLTCProbeOutput(
+        return LTCProbeOutput(
             source: authorized.presentationPath,
             signals: signals.map { signal in
                 summarize(
@@ -100,14 +84,14 @@ public struct TimecodeLTCProbeTool: AgentTool {
 
     private func summarize(
         _ signal: LTC.AssetSignal
-    ) -> AgenticLTCSignalSummary {
-        let anchor: AgenticLTCAnchorSummary?
+    ) -> LTCSignalSummary {
+        let anchor: LTCAnchorSummary?
         let anchorError: String?
 
         do {
             let resolved = try signal.anchor()
 
-            anchor = AgenticLTCAnchorSummary(
+            anchor = LTCAnchorSummary(
                 timecode: resolved.timecode.string,
                 containingFrameAtMediaStart: resolved.containingFrameAtMediaStart,
                 frameAtMediaStart: resolved.frameAtMediaStart,
@@ -125,7 +109,7 @@ public struct TimecodeLTCProbeTool: AgentTool {
         let rate = signal.format.frameRate
         let detection = signal.detection
 
-        return AgenticLTCSignalSummary(
+        return LTCSignalSummary(
             trackID: signal.trackID,
             channel: signal.channel,
             frameRate: rate.rationalString,
@@ -141,25 +125,26 @@ public struct TimecodeLTCProbeTool: AgentTool {
         )
     }
 }
+}
 
-public struct AgenticLTCProbeOutput:
+public struct LTCProbeOutput:
     Sendable,
     Codable,
     Hashable
 {
     public let source: String
-    public let signals: [AgenticLTCSignalSummary]
+    public let signals: [LTCSignalSummary]
 
     public init(
         source: String,
-        signals: [AgenticLTCSignalSummary]
+        signals: [LTCSignalSummary]
     ) {
         self.source = source
         self.signals = signals
     }
 }
 
-public struct AgenticLTCSignalSummary:
+public struct LTCSignalSummary:
     Sendable,
     Codable,
     Hashable
@@ -174,7 +159,7 @@ public struct AgenticLTCSignalSummary:
     public let decodedFrameCount: Int
     public let firstTimecode: String
     public let lastTimecode: String
-    public let anchor: AgenticLTCAnchorSummary?
+    public let anchor: LTCAnchorSummary?
     public let anchorError: String?
 
     public init(
@@ -188,7 +173,7 @@ public struct AgenticLTCSignalSummary:
         decodedFrameCount: Int,
         firstTimecode: String,
         lastTimecode: String,
-        anchor: AgenticLTCAnchorSummary?,
+        anchor: LTCAnchorSummary?,
         anchorError: String?
     ) {
         self.trackID = trackID
@@ -206,7 +191,7 @@ public struct AgenticLTCSignalSummary:
     }
 }
 
-public struct AgenticLTCAnchorSummary:
+public struct LTCAnchorSummary:
     Sendable,
     Codable,
     Hashable

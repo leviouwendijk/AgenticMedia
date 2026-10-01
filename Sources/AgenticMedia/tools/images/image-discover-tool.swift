@@ -1,67 +1,51 @@
 import Agentic
 import AgenticExecution
 import AgenticIO
-import AgenticWorkspace
+import Workspace
+import Macros
 import Images
 
-public struct ImageDiscoverTool: AgentTool {
-    public typealias Input = AgenticMediaPathInput
-    public typealias Output = AgenticImageDiscoveryOutput
+public extension Media.Tools {
+    @Tool("image_discover")
+    struct DiscoverImages: Tool {
+        public typealias Input = MediaPathInput
+        public typealias Output = ImageDiscoveryOutput
 
-    public static let identifier: AgentToolIdentifier =
-        "image_discover"
+        public static let purpose =
+            "Discover supported image sources under the raw directory of a workspace Images project."
 
-    public static let description =
-        "Discover supported image sources under the raw directory of a workspace Images project."
+        public static let risk: ActionRisk = .observe
 
-    public static let risk: ActionRisk = .observe
-
-    public var identifier: AgentToolIdentifier {
-        Self.identifier
-    }
-
-    public var description: String {
-        Self.description
-    }
-
-    public var risk: ActionRisk {
-        Self.risk
-    }
-
-    public var execution: AgentToolExecutionContract {
-        .targetable
-    }
-
-    public init() {}
+        public init() {}
 
     public func preflight(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> ToolPreflight {
         let authorized = try FileToolAccess.authorize(
-            workspace: context.workspace,
+            workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .scan,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .directory
         )
 
         return .init(
-            toolName: name,
-            risk: risk,
-            workspaceRoot: context.workspace?.rootURL.path,
-            targetPaths: [
-                authorized.presentationPath,
-            ],
+            tool: Self.definition.identifier,
+            risk: Self.risk,
             summary: "Discover image sources without modifying the Images project.",
-            sideEffects: [],
-            rootIDs: [
-                input.rootID.rawValue,
-            ],
-            capabilitiesRequired: [
-                .scan,
-            ],
+            access: .init(
+                targets: [
+                    authorized.presentationPath,
+                ],
+                roots: [
+                    input.rootID.rawValue,
+                ],
+                capabilities: [
+                    .scan,
+                ]
+            ),
             policyChecks: [
                 "workspace_required",
                 "workspace_path_authorized",
@@ -72,14 +56,14 @@ public struct ImageDiscoverTool: AgentTool {
 
     public func call(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> Output {
         let authorized = try FileToolAccess.authorize(
-            workspace: context.workspace,
+            workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .scan,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .directory
         )
 
@@ -89,10 +73,10 @@ public struct ImageDiscoverTool: AgentTool {
             )
         )
 
-        return AgenticImageDiscoveryOutput(
+        return ImageDiscoveryOutput(
             project: authorized.presentationPath,
             sources: sources.map { source in
-                AgenticImageSourceSummary(
+                ImageSourceSummary(
                     path: source.relative.string,
                     format: source.url.pathExtension.lowercased()
                 )
@@ -100,25 +84,26 @@ public struct ImageDiscoverTool: AgentTool {
         )
     }
 }
+}
 
-public struct AgenticImageDiscoveryOutput:
+public struct ImageDiscoveryOutput:
     Sendable,
     Codable,
     Hashable
 {
     public let project: String
-    public let sources: [AgenticImageSourceSummary]
+    public let sources: [ImageSourceSummary]
 
     public init(
         project: String,
-        sources: [AgenticImageSourceSummary]
+        sources: [ImageSourceSummary]
     ) {
         self.project = project
         self.sources = sources
     }
 }
 
-public struct AgenticImageSourceSummary:
+public struct ImageSourceSummary:
     Sendable,
     Codable,
     Hashable

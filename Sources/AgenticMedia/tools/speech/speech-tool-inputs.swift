@@ -5,7 +5,7 @@ import Macros
 
 /// Transcribe speech from one authorized workspace media file.
 @JSONSchema
-public struct SpeechTranscribeToolInput:
+public struct SpeechTranscribeInput:
     Sendable,
     Codable,
     Hashable
@@ -31,7 +31,7 @@ public struct SpeechTranscribeToolInput:
     }
 }
 
-private extension SpeechTranscribeToolInput {
+private extension SpeechTranscribeInput {
     enum CodingKeys: String, CodingKey {
         case rootID
         case path
@@ -39,7 +39,7 @@ private extension SpeechTranscribeToolInput {
     }
 }
 
-public extension SpeechTranscribeToolInput {
+public extension SpeechTranscribeInput {
     init(
         from decoder: any Decoder
     ) throws {
@@ -66,7 +66,7 @@ public extension SpeechTranscribeToolInput {
 
 /// Analyze speech, diarization, and speaker attribution for one authorized workspace media file.
 @JSONSchema
-public struct SpeechAnalyzeToolInput:
+public struct SpeechAnalyzeInput:
     Sendable,
     Codable,
     Hashable
@@ -98,7 +98,7 @@ public struct SpeechAnalyzeToolInput:
     }
 }
 
-private extension SpeechAnalyzeToolInput {
+private extension SpeechAnalyzeInput {
     enum CodingKeys: String, CodingKey {
         case rootID
         case path
@@ -107,7 +107,7 @@ private extension SpeechAnalyzeToolInput {
     }
 }
 
-public extension SpeechAnalyzeToolInput {
+public extension SpeechAnalyzeInput {
     init(
         from decoder: any Decoder
     ) throws {

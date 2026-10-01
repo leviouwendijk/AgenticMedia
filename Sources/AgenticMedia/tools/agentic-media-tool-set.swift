@@ -1,6 +1,6 @@
 import AgenticExecution
 
-public struct AgenticMediaToolSet: AgentToolSet {
+public struct MediaToolProvider: AgentToolProvider {
     private let speech: AgenticMediaSpeechRuntime?
 
     public init(
@@ -9,22 +9,37 @@ public struct AgenticMediaToolSet: AgentToolSet {
         self.speech = speech
     }
 
-    public func register(
+    public func registerTools(
         into registry: inout ToolRegistry
     ) throws {
         try registry.register {
-            MediaInspectTool()
-            TimecodeLTCProbeTool()
-            TimecodeLTCRemuxTool()
-            ImageDiscoverTool()
-            ImageCompressTool()
+            AgentToolRegistration.tool(
+                Media.Tools.Inspect(),
+                execution: .targetable
+            )
+            AgentToolRegistration.tool(
+                Media.Tools.ProbeLTC(),
+                execution: .targetable
+            )
+            AgentToolRegistration.tool(
+                Media.Tools.RemuxLTC(),
+                execution: .targetable
+            )
+            AgentToolRegistration.tool(
+                Media.Tools.DiscoverImages(),
+                execution: .targetable
+            )
+            AgentToolRegistration.tool(
+                Media.Tools.CompressImages(),
+                execution: .targetable
+            )
         }
 
         if let speech {
-            try registry.register(
-                AgenticMediaSpeechToolSet(
-                    runtime: speech
-                )
+            try MediaSpeechToolProvider(
+                runtime: speech
+            ).registerTools(
+                into: &registry
             )
         }
     }

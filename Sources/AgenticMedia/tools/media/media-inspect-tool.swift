@@ -1,67 +1,51 @@
 import Agentic
 import AgenticExecution
 import AgenticIO
-import AgenticWorkspace
+import Workspace
+import Macros
 import MediaAV
 
-public struct MediaInspectTool: AgentTool {
-    public typealias Input = AgenticMediaPathInput
-    public typealias Output = MediaAssetInspection
+public extension Media.Tools {
+    @Tool("media_inspect")
+    struct Inspect: Tool {
+        public typealias Input = MediaPathInput
+        public typealias Output = MediaAssetInspection
 
-    public static let identifier: AgentToolIdentifier =
-        "media_inspect"
+        public static let purpose =
+            "Inspect tracks, formats, timing, and native timecode metadata for a workspace media asset."
 
-    public static let description =
-        "Inspect tracks, formats, timing, and native timecode metadata for a workspace media asset."
+        public static let risk: ActionRisk = .observe
 
-    public static let risk: ActionRisk = .observe
-
-    public var identifier: AgentToolIdentifier {
-        Self.identifier
-    }
-
-    public var description: String {
-        Self.description
-    }
-
-    public var risk: ActionRisk {
-        Self.risk
-    }
-
-    public var execution: AgentToolExecutionContract {
-        .targetable
-    }
-
-    public init() {}
+        public init() {}
 
     public func preflight(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> ToolPreflight {
         let authorized = try FileToolAccess.authorize(
-            workspace: context.workspace,
+            workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
         return .init(
-            toolName: name,
-            risk: risk,
-            workspaceRoot: context.workspace?.rootURL.path,
-            targetPaths: [
-                authorized.presentationPath,
-            ],
+            tool: Self.definition.identifier,
+            risk: Self.risk,
             summary: "Inspect media metadata without modifying the asset.",
-            sideEffects: [],
-            rootIDs: [
-                input.rootID.rawValue,
-            ],
-            capabilitiesRequired: [
-                .read,
-            ],
+            access: .init(
+                targets: [
+                    authorized.presentationPath,
+                ],
+                roots: [
+                    input.rootID.rawValue,
+                ],
+                capabilities: [
+                    .read,
+                ]
+            ),
             policyChecks: [
                 "workspace_required",
                 "workspace_path_authorized",
@@ -72,14 +56,14 @@ public struct MediaInspectTool: AgentTool {
 
     public func call(
         _ input: Input,
-        context: AgentToolExecutionContext
+        workspace: WorkspaceContext?
     ) async throws -> Output {
         let authorized = try FileToolAccess.authorize(
-            workspace: context.workspace,
+            workspace: workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,
-            toolName: name,
+            toolName: Self.identifier.rawValue,
             type: .file
         )
 
@@ -87,4 +71,5 @@ public struct MediaInspectTool: AgentTool {
             authorized.absoluteURL
         )
     }
+}
 }
