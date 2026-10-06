@@ -12,28 +12,11 @@ public struct MediaToolProvider: AgentToolProvider {
     public func registerTools(
         into registry: inout ToolRegistry
     ) throws {
-        try registry.register {
-            AgentToolRegistration.tool(
-                Media.Tools.Inspect(),
-                execution: .targetable
-            )
-            AgentToolRegistration.tool(
-                Media.Tools.ProbeLTC(),
-                execution: .targetable
-            )
-            AgentToolRegistration.tool(
-                Media.Tools.RemuxLTC(),
-                execution: .targetable
-            )
-            AgentToolRegistration.tool(
-                Media.Tools.DiscoverImages(),
-                execution: .targetable
-            )
-            AgentToolRegistration.tool(
-                Media.Tools.CompressImages(),
-                execution: .targetable
-            )
-        }
+        try registry.register(Media.Tools.Inspect())
+        try registry.register(Media.Tools.ProbeLTC())
+        try registry.register(Media.Tools.RemuxLTC())
+        try registry.register(Media.Tools.DiscoverImages())
+        try registry.register(Media.Tools.CompressImages())
 
         if let speech {
             try MediaSpeechToolProvider(

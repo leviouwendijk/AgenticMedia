@@ -26,12 +26,12 @@ public extension Media.Tools {
 
     public func preflight(
         _ input: Input,
-        workspace: WorkspaceContext?
+        in context: ToolContext
     ) async throws -> ToolPreflight {
         try validate(input)
 
         let authorized = try FileToolAccess.authorize(
-            workspace: workspace,
+            workspace: context.workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,
@@ -65,12 +65,12 @@ public extension Media.Tools {
 
     public func call(
         _ input: Input,
-        workspace: WorkspaceContext?
+        in context: ToolContext
     ) async throws -> Output {
         try validate(input)
 
         let authorized = try FileToolAccess.authorize(
-            workspace: workspace,
+            workspace: context.workspace,
             rootID: input.rootID,
             path: input.path,
             capability: .read,

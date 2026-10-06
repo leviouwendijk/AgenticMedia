@@ -12,19 +12,15 @@ public struct MediaSpeechToolProvider: AgentToolProvider {
     public func registerTools(
         into registry: inout ToolRegistry
     ) throws {
-        try registry.register {
-            AgentToolRegistration.tool(
-                Media.Tools.TranscribeSpeech(
-                    runtime: runtime
-                ),
-                execution: .targetable
+        try registry.register(
+            Media.Tools.TranscribeSpeech(
+                runtime: runtime
             )
-            AgentToolRegistration.tool(
-                Media.Tools.AnalyzeSpeech(
-                    runtime: runtime
-                ),
-                execution: .targetable
+        )
+        try registry.register(
+            Media.Tools.AnalyzeSpeech(
+                runtime: runtime
             )
-        }
+        )
     }
 }

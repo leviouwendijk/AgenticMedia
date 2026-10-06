@@ -16,8 +16,10 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
                 "voice",
             ]
         ) {
-            try await AgenticMediaFlowSuite
-                .runAppleVoiceInputSurface()
+            Step("construct Apple voice input provider") {
+                _ = try await AgenticMediaFlowSuite
+                    .runAppleVoiceInputSurface()
+            }
         },
         speechToolSurfaceFlow,
         speechSkillSurfaceFlow,
@@ -82,16 +84,8 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
             ]
         ) {
             Step("path input defaults to project root") {
-                let decoded = try JSONToolBridge.decode(
-                    MediaPathInput.self,
-                    from: .object(
-                        [
-                            "path": .string(
-                                "clip.mov"
-                            ),
-                        ]
-                    )
-                )
+                let decoded = try JSONValue.encoding(MediaPathInput(path: "clip.mov"))
+                    .decode(MediaPathInput.self)
 
                 try Expect.equal(
                     decoded.rootID,
@@ -117,16 +111,8 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
             ]
         ) {
             Step("image compression input uses bounded defaults") {
-                let decoded = try JSONToolBridge.decode(
-                    ImageCompressInput.self,
-                    from: .object(
-                        [
-                            "path": .string(
-                                "image-project"
-                            ),
-                        ]
-                    )
-                )
+                let decoded = try JSONValue.encoding(ImageCompressInput(path: "image-project"))
+                    .decode(ImageCompressInput.self)
 
                 try Expect.equal(
                     decoded.rootID,
@@ -165,19 +151,8 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
             ]
         ) {
             Step("timecode remux input defaults to project root") {
-                let decoded = try JSONToolBridge.decode(
-                    TimecodeLTCRemuxInput.self,
-                    from: .object(
-                        [
-                            "source": .string(
-                                "source.mp4"
-                            ),
-                            "destination": .string(
-                                "output.mov"
-                            ),
-                        ]
-                    )
-                )
+                let decoded = try JSONValue.encoding(TimecodeLTCRemuxInput(source: "source.mp4", destination: "output.mov"))
+                    .decode(TimecodeLTCRemuxInput.self)
 
                 try Expect.equal(
                     decoded.rootID,

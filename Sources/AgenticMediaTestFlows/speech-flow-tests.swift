@@ -50,29 +50,29 @@ extension AgenticMediaFlowSuite {
                     "speech-enabled AgenticMedia registered tool count"
                 )
 
-                let names = registry.definitions
-                    .map(\.name)
+                let expectedTools = [
+                    Media.Tools.TranscribeSpeech.identifier.rawValue,
+                    Media.Tools.AnalyzeSpeech.identifier.rawValue,
+                    Media.Tools.CompressImages.identifier.rawValue,
+                    Media.Tools.DiscoverImages.identifier.rawValue,
+                    Media.Tools.Inspect.identifier.rawValue,
+                    Media.Tools.ProbeLTC.identifier.rawValue,
+                    Media.Tools.RemuxLTC.identifier.rawValue,
+                ].sorted()
+
+                let actualTools = registry.definitions
+                    .map { $0.identifier.rawValue }
                     .sorted()
 
-                try Expect.true(
-                    names.contains(
-                        Media.Tools.TranscribeSpeech.identifier.rawValue
-                    ),
-                    "AgenticMedia registers speech_transcribe"
+                try Expect.equal(
+                    actualTools,
+                    expectedTools,
+                    "speech-enabled AgenticMedia registered tools match expected"
                 )
 
-                try Expect.true(
-                    names.contains(
-                        Media.Tools.AnalyzeSpeech.identifier.rawValue
-                    ),
-                    "AgenticMedia registers speech_analyze"
-                )
-
-                let missingSemanticSchemas = registry.capabilities
-                    .filter {
-                        $0.semanticInputSchema == nil
-                    }
-                    .map(\.definition.name)
+                let missingSemanticSchemas = registry.inspect().tools
+                    .filter { $0.semanticInputSchema == nil }
+                    .map { $0.identifier.rawValue }
                     .sorted()
 
                 try Expect.equal(

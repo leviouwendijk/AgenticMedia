@@ -84,11 +84,11 @@ public extension Media.Tools {
 
     public func preflight(
         _ input: Input,
-        workspace: WorkspaceContext?
+        in context: ToolContext
     ) async throws -> ToolPreflight {
         let authorization = try authorizeOperation(
             input,
-            workspace: workspace
+            workspace: context.workspace
         )
 
         return .init(
@@ -132,11 +132,11 @@ public extension Media.Tools {
 
     public func call(
         _ input: Input,
-        workspace: WorkspaceContext?
+        in context: ToolContext
     ) async throws -> Output {
         let authorization = try authorizeOperation(
             input,
-            workspace: workspace
+            workspace: context.workspace
         )
 
         let sourceURL = authorization.source.absoluteURL
