@@ -1,11 +1,10 @@
 import Agentic
 
-public extension AgenticMediaSkillProvider {
-    static let speechAnalysis = AgentSkill(
-        identifier: "speech-analysis",
-        name: "Speech analysis",
-        summary: "Choose the smallest useful speech capability and interpret speaker attribution conservatively.",
-        body: """
+/// Authored guidance, independently selectable from capability exposure.
+public extension Media.Instructions {
+    @Instruction
+    enum SpeechAnalysis {
+        public static let content = """
         Choose speech tooling according to what the task actually needs.
 
         Workflow:
@@ -17,28 +16,21 @@ public extension AgenticMediaSkillProvider {
         6. Treat speaker identifiers as anonymous inferred speaker clusters, not as real-world identities.
         7. Preserve unassigned segments and confidence information instead of overstating uncertain attribution.
         8. Prefer the bounded conversation result for ordinary reasoning. Do not request or manufacture diagnostic inference, embedding observations, or acoustic evidence unless a dedicated diagnostic workflow explicitly requires them.
-        """,
-        metadata: .init(
-            domains: [
-                .init(rawValue: Media.namespace.rawValue),
-            ],
-            tools: .init(
-                optional: [
-                    .tool(Media.Tools.Inspect.identifier),
-                    .tool(Media.Tools.TranscribeSpeech.identifier),
-                    .tool(Media.Tools.AnalyzeSpeech.identifier),
-                ]
-            ),
-            tags: [
-                "media",
-                "speech",
-                "transcription",
-                "diarization",
-            ],
-            attributes: [
-                "pack": "agentic-media",
-                "kind": "workflow",
-            ]
-        )
-    )
+        """
+    }
+
+    @Instruction
+    enum LTCTimecodeWorkflow {
+        public static let content = """
+        Use a staged LTC workflow instead of mutating media immediately.
+
+        Workflow:
+        1. Use `\(Media.Tools.Inspect.identifier.rawValue)` when track layout and native metadata are not already known.
+        2. Use `\(Media.Tools.ProbeLTC.identifier.rawValue)` to detect and inspect LTC before proposing a remux.
+        3. Only use `\(Media.Tools.RemuxLTC.identifier.rawValue)` after the source, destination, and detected LTC state are clear.
+        4. Treat remux as a media mutation and preserve the normal Agentic review boundary.
+        5. Inspect or otherwise verify the produced media after remux when the result matters to downstream work.
+        6. Do not infer usable LTC merely from the existence of an audio track; rely on the deterministic probe result.
+        """
+    }
 }

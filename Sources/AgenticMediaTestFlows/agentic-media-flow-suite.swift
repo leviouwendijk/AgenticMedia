@@ -22,7 +22,7 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
             }
         },
         speechToolSurfaceFlow,
-        speechSkillSurfaceFlow,
+        speechInstructionSurfaceFlow,
         TestFlow(
             "agentic-media-tool-surface",
             tags: [
