@@ -3,12 +3,12 @@
   "failed_names" : [
 
   ],
-  "generated_at" : "2026-10-06T10:33:08Z",
+  "generated_at" : "2026-10-16T08:48:42Z",
   "passed" : 7,
   "results" : [
     {
       "display_name" : "apple-voice-input",
-      "duration_seconds" : 0.0006829500198364258,
+      "duration_seconds" : 0.0008980035781860352,
       "name" : "apple-voice-input",
       "status" : "passed",
       "tags" : [
@@ -19,7 +19,7 @@
     },
     {
       "display_name" : "agentic-media-speech-tool-surface",
-      "duration_seconds" : 0.006233096122741699,
+      "duration_seconds" : 0.006132960319519043,
       "name" : "agentic-media-speech-tool-surface",
       "status" : "passed",
       "tags" : [
@@ -30,20 +30,20 @@
       ]
     },
     {
-      "display_name" : "agentic-media-skill-surface",
-      "duration_seconds" : 0.0010010004043579102,
-      "name" : "agentic-media-skill-surface",
+      "display_name" : "agentic-media-instruction-surface",
+      "duration_seconds" : 0.0012099742889404297,
+      "name" : "agentic-media-instruction-surface",
       "status" : "passed",
       "tags" : [
         "agentic-media",
-        "skills",
+        "instructions",
         "speech",
         "timecode"
       ]
     },
     {
       "display_name" : "agentic-media-tool-surface",
-      "duration_seconds" : 0.00021708011627197266,
+      "duration_seconds" : 0.0019199848175048828,
       "name" : "agentic-media-tool-surface",
       "status" : "passed",
       "tags" : [
@@ -54,7 +54,7 @@
     },
     {
       "display_name" : "agentic-media-path-input",
-      "duration_seconds" : 0.0011839866638183594,
+      "duration_seconds" : 0.0016109943389892578,
       "name" : "agentic-media-path-input",
       "status" : "passed",
       "tags" : [
@@ -65,7 +65,7 @@
     },
     {
       "display_name" : "agentic-media-image-compress-input",
-      "duration_seconds" : 0.0008829832077026367,
+      "duration_seconds" : 0.0010609626770019531,
       "name" : "agentic-media-image-compress-input",
       "status" : "passed",
       "tags" : [
@@ -77,7 +77,7 @@
     },
     {
       "display_name" : "agentic-media-timecode-remux-input",
-      "duration_seconds" : 0.000738978385925293,
+      "duration_seconds" : 0.0006788969039916992,
       "name" : "agentic-media-timecode-remux-input",
       "status" : "passed",
       "tags" : [

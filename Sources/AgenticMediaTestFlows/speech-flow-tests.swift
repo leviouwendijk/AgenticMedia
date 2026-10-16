@@ -1,6 +1,7 @@
 import Agentic
 import AgenticMedia
 import AgenticMediaApple
+import AgenticRuntime
 import SpeechAnalysis
 import TestFlows
 import Transcribe
@@ -36,13 +37,18 @@ extension AgenticMediaFlowSuite {
                     }
                 )
 
-                var registry = ToolRegistry()
-
-                try registry.register(
-                    from: MediaToolProvider(
-                        speech: runtime
+                let application = try Agentic.application(
+                    "fixture.media.derived_speech"
+                ) {
+                    try install(
+                        Media.self,
+                        overrides: .init(replacing:
+                            install(Media.Tools.TranscribeSpeech(runtime: runtime))
+                            + install(Media.Tools.AnalyzeSpeech(runtime: runtime))
+                        )
                     )
-                )
+                }
+                let registry = try InstalledCapabilities(application: application).tools
 
                 try Expect.equal(
                     registry.count,

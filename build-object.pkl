@@ -1,0 +1,20 @@
+uuid = "6899C552-D6E9-442D-BE57-AA0B4ACBB053"
+name = "AgenticMedia"
+types { "library" }
+versions {
+    release {
+        major = 0
+        minor = 1
+        patch = 0
+    }
+}
+compile {
+    use = false
+    arguments { }
+}
+tests {
+    primary = "amtest"
+}
+details = ""
+author = "levi"
+update = "https://raw.githubusercontent.com/leviouwendijk/AgenticMedia/master/build-object.pkl"

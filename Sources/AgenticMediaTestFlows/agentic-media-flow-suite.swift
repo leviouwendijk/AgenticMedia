@@ -1,5 +1,6 @@
 import Agentic
 import AgenticMedia
+import AgenticRuntime
 import Path
 import Primitives
 import TestFlows
@@ -32,11 +33,10 @@ enum AgenticMediaFlowSuite: TestFlowRegistry {
             ]
         ) {
             Step("register media capability tool set") {
-                var registry = ToolRegistry()
-
-                try registry.register(
-                    from: MediaToolProvider()
-                )
+                let application = Agentic.application("fixture.media.derived") {
+                    install(Media.self)
+                }
+                let registry = try InstalledCapabilities(application: application).tools
 
                 _ = try Expect.notNil(
                     registry.registeredTool(

@@ -1,5 +1,5 @@
 {
-  "originHash" : "b2138cce15190bf9f876d7d65172ae76eeb53d695158329a8d852728fc53823e",
+  "originHash" : "39cd7b281f4a00e31e839f307ed554341c918fffa316d6fd76b25968011c25a4",
   "pins" : [
     {
       "identity" : "agentic",
@@ -7,7 +7,7 @@
       "location" : "https://github.com/leviouwendijk/Agentic.git",
       "state" : {
         "branch" : "master",
-        "revision" : "e2df3ec573dad9e24f514f0ca65a14ddc1d8f7ef"
+        "revision" : "9b814ee1dc9addcb9556e1172cd2aadbc88726a0"
       }
     },
     {
@@ -25,7 +25,16 @@
       "location" : "https://github.com/leviouwendijk/AgenticIO.git",
       "state" : {
         "branch" : "master",
-        "revision" : "96596542964b23b89096b8304c2956a433261d9f"
+        "revision" : "ae0ffa5df069619ae99de6bfe36144e07f46f823"
+      }
+    },
+    {
+      "identity" : "agenticruntime",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/leviouwendijk/AgenticRuntime.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "d18a247b5b810afa7df1eee8bb14d5f069fff14a"
       }
     },
     {
@@ -259,7 +268,7 @@
       "location" : "https://github.com/leviouwendijk/Parsers.git",
       "state" : {
         "branch" : "master",
-        "revision" : "854c581a8ebe33c0d7a731ada37d7cc387819ced"
+        "revision" : "08d6c4c17b9201e980a904eb27a8382a28f914c8"
       }
     },
     {
@@ -268,7 +277,7 @@
       "location" : "https://github.com/leviouwendijk/Parsing.git",
       "state" : {
         "branch" : "master",
-        "revision" : "6c72ab2423ec71ce2e30fb473d088e328f7b7d65"
+        "revision" : "e08c491045a72bdde184cfd826dc2af0fcbe7f30"
       }
     },
     {
@@ -393,8 +402,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-subprocess.git",
       "state" : {
-        "revision" : "55d30558b8b12c0343793421328fe81a4919c776",
-        "version" : "1.0.1"
+        "revision" : "dbe21bd7dfd4ffef8c32588918542a8abfa1b54c",
+        "version" : "1.0.2"
       }
     },
     {
@@ -529,7 +538,7 @@
       "location" : "https://github.com/leviouwendijk/Version.git",
       "state" : {
         "branch" : "master",
-        "revision" : "44bf2fd32106873356b33b3d810724c4bde49caa"
+        "revision" : "2c387c9743e91aa9077f7d0eb7735403f4b6e2fc"
       }
     },
     {
