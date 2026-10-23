@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/FluidInference/FluidAudio.git",
       "state" : {
-        "revision" : "19600a485baa4998812e4654b70d2bab8f2c9949",
-        "version" : "0.15.5"
+        "revision" : "503b4bd1bbf7220882de39fe8ae6716aae4132da",
+        "version" : "0.17.7"
       }
     },
     {
@@ -241,7 +241,7 @@
       "location" : "https://github.com/leviouwendijk/Media.git",
       "state" : {
         "branch" : "master",
-        "revision" : "4bb60c5b012b4971ad6c6b70fb2287f88101866a"
+        "revision" : "08f910154e2e1a392590528c03f7722839f512b2"
       }
     },
     {
@@ -520,7 +520,7 @@
       "location" : "https://github.com/leviouwendijk/Transcribe.git",
       "state" : {
         "branch" : "master",
-        "revision" : "dfda02d92815ec07d4e966d3b2aab4b9d21f44eb"
+        "revision" : "297ce1db4afc3f62c4e6cb08f8c5e0182749c76e"
       }
     },
     {
