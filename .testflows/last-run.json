@@ -3,12 +3,12 @@
   "failed_names" : [
 
   ],
-  "generated_at" : "2026-10-23T14:30:35Z",
+  "generated_at" : "2026-10-23T15:31:58Z",
   "passed" : 7,
   "results" : [
     {
       "display_name" : "apple-voice-input",
-      "duration_seconds" : 0.0006849765777587891,
+      "duration_seconds" : 0.0008980035781860352,
       "name" : "apple-voice-input",
       "status" : "passed",
       "tags" : [
@@ -19,7 +19,7 @@
     },
     {
       "display_name" : "agentic-media-speech-tool-surface",
-      "duration_seconds" : 0.008659005165100098,
+      "duration_seconds" : 0.011216998100280762,
       "name" : "agentic-media-speech-tool-surface",
       "status" : "passed",
       "tags" : [
@@ -31,7 +31,7 @@
     },
     {
       "display_name" : "agentic-media-instruction-surface",
-      "duration_seconds" : 0.0014119148254394531,
+      "duration_seconds" : 0.001672983169555664,
       "name" : "agentic-media-instruction-surface",
       "status" : "passed",
       "tags" : [
@@ -43,7 +43,7 @@
     },
     {
       "display_name" : "agentic-media-tool-surface",
-      "duration_seconds" : 0.0012170076370239258,
+      "duration_seconds" : 0.0009530782699584961,
       "name" : "agentic-media-tool-surface",
       "status" : "passed",
       "tags" : [
@@ -54,7 +54,7 @@
     },
     {
       "display_name" : "agentic-media-path-input",
-      "duration_seconds" : 0.0019570589065551758,
+      "duration_seconds" : 0.0008819103240966797,
       "name" : "agentic-media-path-input",
       "status" : "passed",
       "tags" : [
@@ -65,7 +65,7 @@
     },
     {
       "display_name" : "agentic-media-image-compress-input",
-      "duration_seconds" : 0.0013539791107177734,
+      "duration_seconds" : 0.00031197071075439453,
       "name" : "agentic-media-image-compress-input",
       "status" : "passed",
       "tags" : [
@@ -77,7 +77,7 @@
     },
     {
       "display_name" : "agentic-media-timecode-remux-input",
-      "duration_seconds" : 0.0005960464477539062,
+      "duration_seconds" : 0.0004420280456542969,
       "name" : "agentic-media-timecode-remux-input",
       "status" : "passed",
       "tags" : [

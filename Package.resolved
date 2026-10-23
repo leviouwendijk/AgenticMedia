@@ -241,7 +241,7 @@
       "location" : "https://github.com/leviouwendijk/Media.git",
       "state" : {
         "branch" : "master",
-        "revision" : "fa2c6b99d72c269ccc8630fbdb12c20fa7989f3b"
+        "revision" : "4bb60c5b012b4971ad6c6b70fb2287f88101866a"
       }
     },
     {
@@ -520,7 +520,7 @@
       "location" : "https://github.com/leviouwendijk/Transcribe.git",
       "state" : {
         "branch" : "master",
-        "revision" : "80aa01761a0337d132e49a0d405a37a47899260f"
+        "revision" : "dfda02d92815ec07d4e966d3b2aab4b9d21f44eb"
       }
     },
     {
