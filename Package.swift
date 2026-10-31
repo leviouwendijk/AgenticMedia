@@ -20,6 +20,12 @@ let package = Package(
                 "AgenticMediaApple",
             ]
         ),
+        .library(
+            name: "AgenticMediaCodecs",
+            targets: [
+                "AgenticMediaCodecs",
+            ]
+        ),
         .executable(
             name: "amtest",
             targets: [
@@ -78,6 +84,10 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/leviouwendijk/Capture.git",
+            branch: "master"
+        ),
+        .package(
+            url: "https://github.com/leviouwendijk/Codecs.git",
             branch: "master"
         ),
         .package(
@@ -148,9 +158,29 @@ let package = Package(
             ]
         ),
         .target(
+            name: "AgenticMediaCodecs",
+            dependencies: [
+                "AgenticMedia",
+                .product(name: "Agentic", package: "Agentic"),
+                .product(name: "AgenticIO", package: "AgenticIO"),
+                .product(name: "Workspace", package: "Workspace"),
+                .product(name: "Path", package: "Path"),
+                .product(name: "Macros", package: "Macros"),
+                .product(name: "Schema", package: "Schema"),
+                .product(name: "CodecsLAME", package: "Codecs"),
+                .product(name: "MediaTranscoding", package: "Media"),
+            ]
+        ),
+        .target(
             name: "AgenticMediaApple",
             dependencies: [
                 "AgenticMedia",
+                .product(name: "Agentic", package: "Agentic"),
+                .product(name: "AgenticIO", package: "AgenticIO"),
+                .product(name: "Workspace", package: "Workspace"),
+                .product(name: "Path", package: "Path"),
+                .product(name: "Macros", package: "Macros"),
+                .product(name: "Schema", package: "Schema"),
                 .product(
                     name: "AgenticInterfaces",
                     package: "AgenticInterfaces"
@@ -174,6 +204,8 @@ let package = Package(
             dependencies: [
                 "AgenticMedia",
                 "AgenticMediaApple",
+                "AgenticMediaCodecs",
+                .product(name: "Capture", package: "Capture"),
                 .product(
                     name: "AgenticRuntime",
                     package: "AgenticRuntime"

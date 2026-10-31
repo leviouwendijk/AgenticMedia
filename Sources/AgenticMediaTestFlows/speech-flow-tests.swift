@@ -1,6 +1,7 @@
 import Agentic
 import AgenticMedia
 import AgenticMediaApple
+import AgenticMediaCodecs
 import AgenticRuntime
 import SpeechAnalysis
 import TestFlows
@@ -50,21 +51,22 @@ extension AgenticMediaFlowSuite {
                 }
                 let registry = try InstalledCapabilities(application: application).tools
 
-                try Expect.equal(
-                    registry.count,
-                    7,
-                    "speech-enabled AgenticMedia registered tool count"
-                )
-
                 let expectedTools = [
                     Media.Tools.TranscribeSpeech.identifier.rawValue,
                     Media.Tools.AnalyzeSpeech.identifier.rawValue,
                     Media.Tools.CompressImages.identifier.rawValue,
+                    Media.Tools.ConvertAudio.identifier.rawValue,
                     Media.Tools.DiscoverImages.identifier.rawValue,
                     Media.Tools.Inspect.identifier.rawValue,
                     Media.Tools.ProbeLTC.identifier.rawValue,
                     Media.Tools.RemuxLTC.identifier.rawValue,
                 ].sorted()
+
+                try Expect.equal(
+                    registry.count,
+                    expectedTools.count,
+                    "speech-enabled AgenticMedia registered tool count"
+                )
 
                 let actualTools = registry.definitions
                     .map { $0.identifier.rawValue }
