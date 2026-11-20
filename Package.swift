@@ -26,12 +26,6 @@ let package = Package(
                 "AgenticMediaCodecs",
             ]
         ),
-        .executable(
-            name: "amtest",
-            targets: [
-                "AgenticMediaTestFlows",
-            ]
-        ),
     ],
     dependencies: [
         .package(
@@ -44,10 +38,6 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/leviouwendijk/AgenticIO.git",
-            branch: "master"
-        ),
-        .package(
-            url: "https://github.com/leviouwendijk/AgenticRuntime.git",
             branch: "master"
         ),
         .package(
@@ -92,10 +82,6 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/leviouwendijk/Transcribe.git",
-            branch: "master"
-        ),
-        .package(
-            url: "https://github.com/leviouwendijk/TestFlows.git",
             branch: "master"
         ),
     ],
@@ -196,47 +182,6 @@ let package = Package(
                 .product(
                     name: "TranscribeApple",
                     package: "Transcribe"
-                ),
-            ]
-        ),
-        .executableTarget(
-            name: "AgenticMediaTestFlows",
-            dependencies: [
-                "AgenticMedia",
-                "AgenticMediaApple",
-                "AgenticMediaCodecs",
-                .product(name: "Capture", package: "Capture"),
-                .product(
-                    name: "AgenticRuntime",
-                    package: "AgenticRuntime"
-                ),
-                .product(
-                    name: "AgenticInterfaces",
-                    package: "AgenticInterfaces"
-                ),
-                .product(
-                    name: "Agentic",
-                    package: "Agentic"
-                ),
-                .product(
-                    name: "Path",
-                    package: "Path"
-                ),
-                .product(
-                    name: "Primitives",
-                    package: "Primitives"
-                ),
-                .product(
-                    name: "Transcribe",
-                    package: "Transcribe"
-                ),
-                .product(
-                    name: "SpeechAnalysis",
-                    package: "Transcribe"
-                ),
-                .product(
-                    name: "TestFlows",
-                    package: "TestFlows"
                 ),
             ]
         ),
