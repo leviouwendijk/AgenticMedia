@@ -5,7 +5,7 @@ import Macros
 import MediaAV
 
 public extension Media.Tools {
-    @Tool("media_inspect")
+    @Tool("inspect")
     struct Inspect: Tool {
         public typealias Input = MediaPathInput
         public typealias Output = MediaAssetInspection

@@ -21,7 +21,7 @@ public enum AgenticAudioConversionError: Error, Sendable {
 }
 
 public extension Media.Tools {
-    @Tool("media_audio_convert")
+    @Tool("audio_convert")
     struct ConvertAudio: Tool {
         public typealias Input = AgenticAudioConversionInput
         public typealias Output = MediaAudioTranscodeResult

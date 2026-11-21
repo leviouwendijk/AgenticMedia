@@ -1,4 +1,4 @@
 import Agentic
 
-@Domain
+@Domain("media")
 public enum Media {}
