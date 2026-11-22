@@ -171,6 +171,7 @@ let package = Package(
                     name: "AgenticInterfaces",
                     package: "AgenticInterfaces"
                 ),
+                .product(name: "AgenticPresentation", package: "AgenticInterfaces"),
                 .product(
                     name: "Capture",
                     package: "Capture"
