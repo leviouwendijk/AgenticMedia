@@ -16,7 +16,7 @@
       "location" : "https://github.com/leviouwendijk/AgenticInterfaces.git",
       "state" : {
         "branch" : "master",
-        "revision" : "96d028393fe5aade60f1a267fa50e979981d29f8"
+        "revision" : "939cb36e8cd592047279690b5b73d89f7f9215ee"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/leviouwendijk/AgenticIO.git",
       "state" : {
         "branch" : "master",
-        "revision" : "a77a1aed9c3c760b53403031a0a245d231128415"
+        "revision" : "00a6791503539570a14935dd86251a91c8a44bc0"
       }
     },
     {
@@ -97,7 +97,7 @@
       "location" : "https://github.com/leviouwendijk/Difference.git",
       "state" : {
         "branch" : "master",
-        "revision" : "173c7ee5598d3dba341f3205e717d76d46fb6fd5"
+        "revision" : "e926c931531161da98cb9ef16598d931af23e84d"
       }
     },
     {
@@ -106,7 +106,7 @@
       "location" : "https://github.com/leviouwendijk/DSL.git",
       "state" : {
         "branch" : "master",
-        "revision" : "14b60217f2e8d6c94e9869ec6f81697aa416c55d"
+        "revision" : "c25c620bc766e4a3e59e6224b11c9a868a5f88d5"
       }
     },
     {
@@ -304,7 +304,7 @@
       "location" : "https://github.com/leviouwendijk/Parsers.git",
       "state" : {
         "branch" : "master",
-        "revision" : "71946b149369d217504e31638aa35f0bc41a1164"
+        "revision" : "492b6946afe0c977267944730b7000bfbcaebb6e"
       }
     },
     {
@@ -331,7 +331,7 @@
       "location" : "https://github.com/leviouwendijk/Path.git",
       "state" : {
         "branch" : "master",
-        "revision" : "dd259e212af9e97ba5e91bd3216be9688eb7df25"
+        "revision" : "3cef050339e68298c869b98daf25401c06531a91"
       }
     },
     {
@@ -592,7 +592,7 @@
       "location" : "https://github.com/leviouwendijk/Transcribe.git",
       "state" : {
         "branch" : "master",
-        "revision" : "a947977bc5a8bcfd20b79d39f96bfac9833bbb6e"
+        "revision" : "e39b9c4333f436e330eb79ac5a28a32922a00f8d"
       }
     },
     {
