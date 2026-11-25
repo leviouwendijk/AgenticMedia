@@ -33,7 +33,7 @@ let package = Package(
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Workspace.git",
+            url: "https://github.com/swift-lco/Workspace.git",
             branch: "master"
         ),
         .package(
@@ -41,31 +41,31 @@ let package = Package(
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Primitives.git",
+            url: "https://github.com/swift-lco/Primitives.git",
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Schema.git",
+            url: "https://github.com/swift-lco/Schema.git",
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Macros.git",
+            url: "https://github.com/swift-lco/Macros.git",
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Path.git",
+            url: "https://github.com/swift-lco/Path.git",
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Media.git",
+            url: "https://github.com/swift-lco/Media.git",
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Timecode.git",
+            url: "https://github.com/swift-lco/Timecode.git",
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Images.git",
+            url: "https://github.com/swift-lco/Images.git",
             branch: "master"
         ),
         .package(
@@ -73,15 +73,15 @@ let package = Package(
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Capture.git",
+            url: "https://github.com/swift-lco/Capture.git",
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Codecs.git",
+            url: "https://github.com/swift-lco/Codecs.git",
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Transcribe.git",
+            url: "https://github.com/swift-lco/Transcribe.git",
             branch: "master"
         ),
     ],

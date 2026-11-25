@@ -25,11 +25,11 @@ let package = Package(
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Primitives.git",
+            url: "https://github.com/swift-lco/Primitives.git",
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Path.git",
+            url: "https://github.com/swift-lco/Path.git",
             branch: "master"
         ),
         .package(
@@ -37,11 +37,11 @@ let package = Package(
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Capture.git",
+            url: "https://github.com/swift-lco/Capture.git",
             branch: "master"
         ),
         .package(
-            url: "https://github.com/leviouwendijk/Transcribe.git",
+            url: "https://github.com/swift-lco/Transcribe.git",
             branch: "master"
         ),
         .package(
