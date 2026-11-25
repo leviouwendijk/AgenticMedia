@@ -3,9 +3,36 @@ import AgenticMedia
 import AgenticMediaApple
 import AgenticMediaCodecs
 import AgenticRuntime
+import Diarization
+import Foundation
 import SpeechAnalysis
 import TestFlows
 import Transcribe
+
+private final class SpeakerCountRecorder:
+    @unchecked Sendable
+{
+    private let lock = NSLock()
+    private var recorded: [SpeakerCountBounds] = []
+
+    func record(
+        _ value: SpeakerCountBounds
+    ) {
+        lock.lock()
+        recorded.append(
+            value
+        )
+        lock.unlock()
+    }
+
+    var values: [SpeakerCountBounds] {
+        lock.lock()
+        defer {
+            lock.unlock()
+        }
+        return recorded
+    }
+}
 
 extension AgenticMediaFlowSuite {
     static var speechToolSurfaceFlow: TestFlow {
@@ -87,6 +114,75 @@ extension AgenticMediaFlowSuite {
                     missingSemanticSchemas,
                     [String](),
                     "speech-enabled AgenticMedia tools all expose semantic input schemas"
+                )
+            }
+
+            Step("speaker count reaches the runtime as bounds; automatic by default") {
+                let received = SpeakerCountRecorder()
+                let runtime = AgenticMediaSpeechRuntime(
+                    transcribe: { _, localeIdentifier in
+                        Transcription(
+                            localeIdentifier: localeIdentifier,
+                            segments: []
+                        )
+                    },
+                    analyze: { _, localeIdentifier, speakerCount in
+                        received.record(
+                            speakerCount
+                        )
+
+                        return SpeechAnalysisResult(
+                            transcription: Transcription(
+                                localeIdentifier: localeIdentifier,
+                                segments: []
+                            )
+                        )
+                    }
+                )
+                let file = URL(
+                    fileURLWithPath: "/tmp/session.wav"
+                )
+
+                _ = try await runtime.analyze(
+                    file: file,
+                    localeIdentifier: "nl-NL"
+                )
+                _ = try await runtime.analyze(
+                    file: file,
+                    localeIdentifier: "nl-NL",
+                    speakerCount: .init(
+                        maximum: 3
+                    )
+                )
+
+                try Expect.equal(
+                    received.values,
+                    [
+                        .automatic,
+                        .init(
+                            maximum: 3
+                        ),
+                    ],
+                    "speech runtime forwards speaker-count bounds"
+                )
+
+                let input = try JSONDecoder().decode(
+                    SpeechAnalyzeInput.self,
+                    from: Data(
+                        #"{"path":"session.wav","localeIdentifier":"nl-NL","maximumSpeakerCount":2}"#.utf8
+                    )
+                )
+
+                try Expect.equal(
+                    input.maximumSpeakerCount,
+                    2,
+                    "speech analyze input decodes maximumSpeakerCount"
+                )
+
+                try Expect.equal(
+                    input.expectedSpeakerCount,
+                    nil,
+                    "speech analyze input leaves expectedSpeakerCount unset"
                 )
             }
         }

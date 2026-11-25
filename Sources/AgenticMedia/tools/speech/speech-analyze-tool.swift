@@ -81,7 +81,12 @@ public extension Media.Tools {
         let analysis = try await runtime.analyze(
             file: authorized.absoluteURL,
             localeIdentifier: input.localeIdentifier,
-            expectedSpeakerCount: input.expectedSpeakerCount
+            speakerCount: .init(
+                exact: input.expectedSpeakerCount,
+                maximum: input.expectedSpeakerCount == nil
+                    ? input.maximumSpeakerCount
+                    : nil
+            )
         )
 
         return SpeechAnalysisContextProjector().project(
@@ -100,6 +105,14 @@ public extension Media.Tools {
                 expectedSpeakerCount
             )
         }
+
+        if let maximumSpeakerCount = input.maximumSpeakerCount,
+           maximumSpeakerCount < 1
+        {
+            throw SpeechAnalyzeError.invalidMaximumSpeakerCount(
+                maximumSpeakerCount
+            )
+        }
     }
 }
 }
@@ -110,11 +123,14 @@ private enum SpeechAnalyzeError:
     LocalizedError
 {
     case invalidExpectedSpeakerCount(Int)
+    case invalidMaximumSpeakerCount(Int)
 
     var errorDescription: String? {
         switch self {
         case .invalidExpectedSpeakerCount(let count):
             return "Expected speaker count must be positive; received \(count)."
+        case .invalidMaximumSpeakerCount(let count):
+            return "Maximum speaker count must be positive; received \(count)."
         }
     }
 }

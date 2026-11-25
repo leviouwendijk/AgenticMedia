@@ -1,3 +1,4 @@
+import Diarization
 import Foundation
 import SpeechAnalysis
 import Transcribe
@@ -11,7 +12,7 @@ public struct AgenticMediaSpeechRuntime: Sendable {
     public typealias AnalyzeHandler = @Sendable (
         URL,
         String,
-        Int?
+        SpeakerCountBounds
     ) async throws -> SpeechAnalysisResult
 
     private let transcribeHandler: TranscribeHandler
@@ -35,15 +36,17 @@ public struct AgenticMediaSpeechRuntime: Sendable {
         )
     }
 
+    /// `speakerCount` defaults to automatic: the diarizer decides how many
+    /// speakers there are.
     public func analyze(
         file: URL,
         localeIdentifier: String,
-        expectedSpeakerCount: Int? = nil
+        speakerCount: SpeakerCountBounds = .automatic
     ) async throws -> SpeechAnalysisResult {
         try await analyzeHandler(
             file,
             localeIdentifier,
-            expectedSpeakerCount
+            speakerCount
         )
     }
 }

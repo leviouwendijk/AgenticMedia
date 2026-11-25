@@ -84,6 +84,10 @@ let package = Package(
                     package: "Transcribe"
                 ),
                 .product(
+                    name: "Diarization",
+                    package: "Transcribe"
+                ),
+                .product(
                     name: "SpeechAnalysis",
                     package: "Transcribe"
                 ),

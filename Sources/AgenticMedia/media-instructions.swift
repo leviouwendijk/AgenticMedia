@@ -12,10 +12,11 @@ public extension Media.Instructions {
         2. Use `\(Media.Tools.AnalyzeSpeech.identifier.rawValue)` when speaker attribution, turn-taking, or who-said-what matters.
         3. Use `\(Media.Tools.Inspect.identifier.rawValue)` first when the media asset, available tracks, or suitability of the source is uncertain.
         4. Do not routinely invoke both speech tools for the same purpose.
-        5. Supply expectedSpeakerCount only when it is supported by the user or reliable evidence; do not guess it merely to force diarization.
-        6. Treat speaker identifiers as anonymous inferred speaker clusters, not as real-world identities.
-        7. Preserve unassigned segments and confidence information instead of overstating uncertain attribution.
-        8. Prefer the bounded conversation result for ordinary reasoning. Do not request or manufacture diagnostic inference, embedding observations, or acoustic evidence unless a dedicated diagnostic workflow explicitly requires them.
+        5. The speaker count is detected automatically. Supply expectedSpeakerCount or maximumSpeakerCount only when the user or reliable evidence supports it; do not guess either to force diarization.
+        6. Treat speaker identifiers as anonymous inferred speaker clusters, not as real-world identities. Quiet speakers far from the microphone may be detected but barely transcribed.
+        7. Read the transcript by turns. Keep `overlap` turns (several candidate speakers) and `uncertain` turns as they are instead of assigning them to a speaker yourself.
+        8. Check `provenance` for how the transcript was made (transcriber, locale, diarizer) before comparing analyses.
+        9. Prefer the bounded conversation result for ordinary reasoning. Do not request or manufacture diagnostic inference, embedding observations, or acoustic evidence unless a dedicated diagnostic workflow explicitly requires them.
         """
     }
 

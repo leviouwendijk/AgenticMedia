@@ -81,20 +81,28 @@ public struct SpeechAnalyzeInput:
     /// Requested transcription locale identifier.
     public let localeIdentifier: String
 
-    /// Optional expected number of speakers when reliably known.
+    /// Exact number of speakers, only when reliably known. Omit it to let
+    /// the diarizer decide.
     @Schema(required: false)
     public let expectedSpeakerCount: Int?
+
+    /// Upper bound on the number of speakers, only when reliably known
+    /// (e.g. at most two people present). Ignored when expectedSpeakerCount is set.
+    @Schema(required: false)
+    public let maximumSpeakerCount: Int?
 
     public init(
         rootID: PathAccessRootIdentifier = .project,
         path: String,
         localeIdentifier: String,
-        expectedSpeakerCount: Int? = nil
+        expectedSpeakerCount: Int? = nil,
+        maximumSpeakerCount: Int? = nil
     ) {
         self.rootID = rootID
         self.path = path
         self.localeIdentifier = localeIdentifier
         self.expectedSpeakerCount = expectedSpeakerCount
+        self.maximumSpeakerCount = maximumSpeakerCount
     }
 }
 
@@ -104,6 +112,7 @@ private extension SpeechAnalyzeInput {
         case path
         case localeIdentifier
         case expectedSpeakerCount
+        case maximumSpeakerCount
     }
 }
 
@@ -133,6 +142,11 @@ public extension SpeechAnalyzeInput {
         expectedSpeakerCount = try container.decodeIfPresent(
             Int.self,
             forKey: .expectedSpeakerCount
+        )
+
+        maximumSpeakerCount = try container.decodeIfPresent(
+            Int.self,
+            forKey: .maximumSpeakerCount
         )
     }
 }
