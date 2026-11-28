@@ -19,7 +19,7 @@ public extension Media.Tools {
 
     public func preflight(
         _ input: Input,
-        in context: ToolContext
+        in context: CapabilityContext
     ) async throws -> ToolPreflight {
         let authorized = try FileToolAccess.authorize(
             workspace: context.workspace,
@@ -55,7 +55,7 @@ public extension Media.Tools {
 
     public func call(
         _ input: Input,
-        in context: ToolContext
+        in context: CapabilityContext
     ) async throws -> Output {
         let authorized = try FileToolAccess.authorize(
             workspace: context.workspace,

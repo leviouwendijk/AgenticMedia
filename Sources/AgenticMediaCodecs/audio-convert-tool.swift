@@ -31,7 +31,7 @@ public extension Media.Tools {
 
         public init() {}
 
-        public func preflight(_ input: Input, in context: ToolContext) async throws -> ToolPreflight {
+        public func preflight(_ input: Input, in context: CapabilityContext) async throws -> ToolPreflight {
             let paths = try authorize(input, in: context)
             return .init(
                 tool: Self.definition.identifier,
@@ -52,7 +52,7 @@ public extension Media.Tools {
             )
         }
 
-        public func call(_ input: Input, in context: ToolContext) async throws -> Output {
+        public func call(_ input: Input, in context: CapabilityContext) async throws -> Output {
             let paths = try authorize(input, in: context)
             let encoder: LAMEEncoder
             switch input.mode {
@@ -71,7 +71,7 @@ public extension Media.Tools {
 
         private func authorize(
             _ input: Input,
-            in context: ToolContext
+            in context: CapabilityContext
         ) throws -> (source: AuthorizedPath, destination: AuthorizedPath) {
             if let channelIndex = input.channelIndex, channelIndex < 0 {
                 throw AgenticAudioConversionError.negativeChannelIndex

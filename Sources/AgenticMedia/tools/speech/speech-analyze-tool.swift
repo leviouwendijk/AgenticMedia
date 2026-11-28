@@ -26,7 +26,7 @@ public extension Media.Tools {
 
     public func preflight(
         _ input: Input,
-        in context: ToolContext
+        in context: CapabilityContext
     ) async throws -> ToolPreflight {
         try validate(input)
 
@@ -65,7 +65,7 @@ public extension Media.Tools {
 
     public func call(
         _ input: Input,
-        in context: ToolContext
+        in context: CapabilityContext
     ) async throws -> Output {
         try validate(input)
 
